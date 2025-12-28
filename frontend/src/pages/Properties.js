@@ -24,19 +24,17 @@ const Properties = () => {
   const [neighborhoods, setNeighborhoods] = useState([]);
   const [loadingLocations, setLoadingLocations] = useState(false);
 
-  // İlk yüklemede şehirleri al (async)
+  // İlk yüklemede şehirleri al (async) - direkt fetch ile
   useEffect(() => {
-    const fetchCities = async () => {
-      try {
-        const response = await locationAPI.getCities();
-        if (response.data && response.data.cities && response.data.cities.length > 0) {
-          setCities(response.data.cities);
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+    fetch(`${BACKEND_URL}/api/locations/cities`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.cities && data.cities.length > 0) {
+          setCities(data.cities);
         }
-      } catch (error) {
-        console.error('Failed to load cities from API, using defaults:', error);
-      }
-    };
-    fetchCities();
+      })
+      .catch(err => console.error('Failed to load cities:', err));
   }, []);
 
   useEffect(() => {

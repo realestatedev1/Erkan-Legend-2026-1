@@ -75,4 +75,14 @@ export const adminAPI = {
   getStats: () => api.get('/admin/stats'),
 };
 
+// Location API - Türkiye 81 İl + İlçe + Mahalle
+export const locationAPI = {
+  getCities: () => api.get('/locations/cities'),
+  getDistricts: (city) => api.get('/locations/districts', { params: { city } }),
+  getNeighborhoods: (city, district) => api.get('/locations/neighborhoods', { params: { city, district } }),
+  getStats: () => api.get('/locations/stats'),
+  seedCities: () => api.post('/locations/seed-from-api'),
+  seedNeighborhoods: (cityName) => api.post('/locations/seed-neighborhoods', null, { params: { city_name: cityName } }),
+};
+
 export default api;

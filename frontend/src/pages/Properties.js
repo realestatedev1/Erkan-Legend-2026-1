@@ -32,9 +32,6 @@ const Properties = () => {
   const [districts, setDistricts] = useState([]);
   const [neighborhoods, setNeighborhoods] = useState([]);
   const [loadingLocations, setLoadingLocations] = useState(false);
-        window.__CITIES_ERROR = err.message;
-      });
-  }, []);
 
   useEffect(() => {
     loadProperties();

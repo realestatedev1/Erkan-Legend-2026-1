@@ -42,19 +42,6 @@ const Home = () => {
   useEffect(() => {
     loadFeaturedProperties();
     
-    // Şehirleri API'den yükle
-    const fetchCities = async () => {
-      try {
-        const response = await locationAPI.getCities();
-        if (response.data && response.data.cities && response.data.cities.length > 0) {
-          setCities(response.data.cities);
-        }
-      } catch (error) {
-        console.error('Failed to load cities from API:', error);
-      }
-    };
-    fetchCities();
-    
     // Auto-slide every 5 seconds
     const slideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);

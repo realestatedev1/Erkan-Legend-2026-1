@@ -1,0 +1,347 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { propertyAPI, franchiseAPI } from '../lib/api';
+import { getCities, getDistricts, getNeighborhoods } from '../data/turkeyLocations';
+
+const Home = () => {
+  const [featuredProperties, setFeaturedProperties] = useState([]);
+  const [stats, setStats] = useState({ properties: 150, clients: 5000, experience: 63 });
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchParams, setSearchParams] = useState({
+    property_type: 'sale',
+    category: '',
+    city: '',
+    district: '',
+    neighborhood: '',
+  });
+  const navigate = useNavigate();
+
+  // Dinamik lokasyon listeleri
+  const [cities] = useState(getCities());
+  const [districts, setDistricts] = useState([]);
+  const [neighborhoods, setNeighborhoods] = useState([]);
+
+  const heroSlides = [
+    { image: '/hero-slider/slide1.jpg', title: 'Modern Lüks Yaşam' },
+    { image: '/hero-slider/slide2.jpg', title: 'Prestijli Binalar' },
+    { image: '/hero-slider/slide3.jpg', title: 'Hayalinizdeki Ev' },
+    { image: '/hero-slider/slide4.jpg', title: 'Mutlu Aileler' },
+    { image: '/hero-slider/slide5.jpg', title: 'Konforlu İç Mekanlar' },
+    { image: '/hero-slider/slide6.jpg', title: 'Şehir Manzaralı' },
+    { image: '/hero-slider/slide7.jpg', title: 'Güvenilir Hizmet' },
+  ];
+
+  useEffect(() => {
+    loadFeaturedProperties();
+    
+    // Auto-slide every 5 seconds
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+
+    return () => clearInterval(slideInterval);
+  }, []);
+
+  // Şehir değiştiğinde ilçeleri güncelle
+  useEffect(() => {
+    if (searchParams.city) {
+      const districtList = getDistricts(searchParams.city);
+      setDistricts(districtList);
+    } else {
+      setDistricts([]);
+      setNeighborhoods([]);
+    }
+  }, [searchParams.city]);
+
+  // İlçe değiştiğinde mahalleleri güncelle
+  useEffect(() => {
+    if (searchParams.city && searchParams.district) {
+      const neighborhoodList = getNeighborhoods(searchParams.city, searchParams.district);
+      setNeighborhoods(neighborhoodList);
+    } else {
+      setNeighborhoods([]);
+    }
+  }, [searchParams.city, searchParams.district]);
+
+  const loadFeaturedProperties = async () => {
+    try {
+      const response = await propertyAPI.getAll({ featured_only: true, limit: 6 });
+      setFeaturedProperties(response.data.properties || []);
+    } catch (error) {
+      console.error('Failed to load featured properties:', error);
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchParams.property_type) params.append('property_type', searchParams.property_type);
+    if (searchParams.category) params.append('category', searchParams.category);
+    if (searchParams.city) params.append('city', searchParams.city);
+    if (searchParams.district) params.append('district', searchParams.district);
+    if (searchParams.neighborhood) params.append('neighborhood', searchParams.neighborhood);
+    navigate(`/properties?${params.toString()}`);
+  };
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section with Background Slider */}
+      <section className="relative h-screen overflow-hidden">
+        {/* Background Slides */}
+        <div className="absolute inset-0">
+          {heroSlides.map((slide, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="w-full h-full object-cover"
+              />
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Content Over Slider */}
+        <div className="relative z-10 h-full flex items-center">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl">
+              {/* Logo */}
+              <div className="mb-6 animate-scaleIn">
+                <img 
+                  src="/logo.jpg" 
+                  alt="Legend Cities" 
+                  className="h-32 w-auto"
+                  data-testid="hero-logo"
+                />
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-bold mb-4 animate-fadeInUp text-white drop-shadow-2xl" data-testid="hero-title">
+                Legend Cities
+              </h1>
+              
+              <p className="text-2xl md:text-3xl mb-2 text-white font-light italic animate-fadeInUp animation-delay-200 drop-shadow-lg" data-testid="hero-subtitle">
+                Live Your Own Legend in Legendary Cities
+              </p>
+              
+              <p className="text-lg md:text-xl mb-8 text-gray-200 animate-fadeInUp animation-delay-400 drop-shadow-md">
+                1962'den beri gayrimenkul sektöründe güvenilir hizmet
+              </p>
+
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="bg-white rounded-lg shadow-2xl p-6 animate-fadeInUp animation-delay-600">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <select
+                  className="px-4 py-3 border rounded text-gray-700"
+                  value={searchParams.property_type}
+                  onChange={(e) => setSearchParams({ ...searchParams, property_type: e.target.value })}
+                  data-testid="search-property-type"
+                >
+                  <option value="sale">Satılık</option>
+                  <option value="rent">Kiralık</option>
+                </select>
+
+                <select
+                  className="px-4 py-3 border rounded text-gray-700"
+                  value={searchParams.category}
+                  onChange={(e) => setSearchParams({ ...searchParams, category: e.target.value })}
+                  data-testid="search-category"
+                >
+                  <option value="">Tüm Kategoriler</option>
+                  <option value="residential">Konut</option>
+                  <option value="commercial">Ticari</option>
+                  <option value="land">Arsa</option>
+                  <option value="tourism">Turizm</option>
+                </select>
+
+                <select
+                  className="px-4 py-3 border rounded text-gray-700"
+                  value={searchParams.city}
+                  onChange={(e) => setSearchParams({ ...searchParams, city: e.target.value, district: '', neighborhood: '' })}
+                  data-testid="search-city"
+                >
+                  <option value="">Şehir Seçin</option>
+                  {cities.map(city => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+
+                <select
+                  className="px-4 py-3 border rounded text-gray-700"
+                  value={searchParams.district}
+                  onChange={(e) => setSearchParams({ ...searchParams, district: e.target.value, neighborhood: '' })}
+                  disabled={!searchParams.city}
+                  data-testid="search-district"
+                >
+                  <option value="">İlçe</option>
+                  {districts.map(district => (
+                    <option key={district} value={district}>{district}</option>
+                  ))}
+                </select>
+
+                <button
+                  type="submit"
+                  className="bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700 transition font-semibold"
+                  data-testid="search-button"
+                >
+                  Ara
+                </button>
+              </div>
+            </form>
+
+            {/* Slide Indicators */}
+            <div className="flex justify-center gap-2 mt-8">
+              {heroSlides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentSlide 
+                      ? 'bg-white w-8' 
+                      : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                  aria-label={`Slide ${index + 1}`}
+                />
+              ))}
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div data-testid="stat-properties">
+              <div className="text-5xl font-bold text-red-600 mb-2">{stats.properties}+</div>
+              <div className="text-gray-600 text-lg">Aktif İlan</div>
+            </div>
+            <div data-testid="stat-clients">
+              <div className="text-5xl font-bold text-red-600 mb-2">{stats.clients}+</div>
+              <div className="text-gray-600 text-lg">Mutlu Müşteri</div>
+            </div>
+            <div data-testid="stat-experience">
+              <div className="text-5xl font-bold text-red-600 mb-2">{stats.experience}</div>
+              <div className="text-gray-600 text-lg">Yıllık Deneyim</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Properties */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Vitrin İlanlar</h2>
+            <p className="text-gray-600">Seçilmiş gayrimenkullerimize göz atın</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {featuredProperties.map((property) => (
+              <Link
+                key={property.id}
+                to={`/properties/${property.id}`}
+                className="bg-white rounded-lg shadow-lg overflow-hidden hover-lift"
+                data-testid={`property-card-${property.id}`}
+              >
+                <div className="h-48 bg-gray-300">
+                  {property.images && property.images.length > 0 ? (
+                    <img
+                      src={`${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`}
+                      alt={property.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                      Fotoğraf Yok
+                    </div>
+                  )}
+                </div>
+                <div className="p-6">
+                  <h3 className="font-bold text-xl mb-2 text-gray-800">{property.title}</h3>
+                  <p className="text-gray-600 mb-2">{property.city}, {property.district}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-2xl font-bold text-red-600">
+                      {property.price.toLocaleString('tr-TR')} {property.currency}
+                    </span>
+                    <span className="text-sm bg-gray-100 px-3 py-1 rounded">
+                      {property.property_type === 'sale' ? 'Satılık' : 'Kiralık'}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              to="/properties"
+              className="inline-block bg-red-600 text-white px-8 py-3 rounded hover:bg-red-700 transition font-semibold"
+              data-testid="view-all-properties"
+            >
+              Tüm İlanları Gör
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Hizmetlerimiz</h2>
+            <p className="text-gray-600">Kapsamlı gayrimenkul çözümleri</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { title: 'Konut Satış & Kiralama', desc: 'Hayalinizdeki evi bulmanızda yanınızdayız' },
+              { title: 'Ticari Alan', desc: 'İşletmeniz için ideal lokasyonlar' },
+              { title: 'Arazi & Arsa', desc: 'Yatırım fırsatları' },
+              { title: 'Danışmanlık', desc: 'Uzman ekibimizle profesyonel destek' },
+              { title: 'Yönetim Hizmetleri', desc: 'Gayrimenkullerinizin profesyonel yönetimi' },
+              { title: 'Değerleme', desc: 'Güvenilir değerleme raporları' },
+            ].map((service, index) => (
+              <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+                <h3 className="text-xl font-bold text-gray-800 mb-2">{service.title}</h3>
+                <p className="text-gray-600">{service.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              to="/services"
+              className="inline-block bg-red-600 text-white px-8 py-3 rounded hover:bg-red-700 transition font-semibold"
+            >
+              Detaylı Bilgi
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Franchise CTA */}
+      <section className="py-20 bg-gradient-to-r from-gray-900 to-red-900 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-4">Franchise Olun</h2>
+          <p className="text-xl mb-8">Legend Cities ailesine katılın ve başarı hikayenizi yazın</p>
+          <Link
+            to="/franchise"
+            className="inline-block bg-white text-red-600 px-8 py-3 rounded hover:bg-gray-100 transition font-semibold"
+            data-testid="franchise-cta"
+          >
+            Başvuru Yap
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Home;

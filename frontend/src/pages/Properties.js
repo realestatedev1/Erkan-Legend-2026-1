@@ -59,7 +59,9 @@ const Properties = () => {
 
   const loadCities = async () => {
     try {
+      console.log('Loading cities from API...');
       const response = await locationAPI.getCities();
+      console.log('Cities API response:', response.data);
       setCities(response.data.cities || []);
     } catch (error) {
       console.error('Failed to load cities:', error);

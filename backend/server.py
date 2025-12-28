@@ -641,6 +641,305 @@ async def seed_initial_data():
     return {"message": "Demo data seeded successfully", "franchise_ids": franchise_ids}
 
 
+# ============ TURKEY LOCATION ENDPOINTS ============
+
+@api_router.get("/locations/cities")
+async def get_cities():
+    """Get all cities (81 provinces) of Turkey"""
+    cities = await db.locations_cities.find({}, {"_id": 0}).sort("name", 1).to_list(100)
+    
+    if not cities:
+        # Return static data if DB is empty
+        return {
+            "cities": [
+                "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin",
+                "Aydın", "Balıkesir", "Bartın", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur",
+                "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Düzce", "Edirne", "Elazığ", "Erzincan",
+                "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdır", "Isparta", "İstanbul",
+                "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kırıkkale", "Kırklareli", "Kırşehir",
+                "Kilis", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş",
+                "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas",
+                "Şanlıurfa", "Şırnak", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak", "Van", "Yalova", "Yozgat", "Zonguldak"
+            ],
+            "total": 81,
+            "source": "static"
+        }
+    
+    return {
+        "cities": [c["name"] for c in cities],
+        "total": len(cities),
+        "source": "database"
+    }
+
+
+@api_router.get("/locations/districts")
+async def get_districts(city: str):
+    """Get all districts of a city"""
+    # First try from database
+    city_data = await db.locations_cities.find_one({"name": city}, {"_id": 0})
+    
+    if city_data and "districts" in city_data:
+        districts = sorted([d["name"] for d in city_data["districts"]])
+        return {
+            "city": city,
+            "districts": districts,
+            "total": len(districts),
+            "source": "database"
+        }
+    
+    # Fallback to static data for major cities
+    static_districts = {
+        "İstanbul": ["Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", "Bakırköy", "Başakşehir",
+                     "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", "Beyoğlu", "Büyükçekmece", "Çatalca", "Çekmeköy",
+                     "Esenler", "Esenyurt", "Eyüpsultan", "Fatih", "Gaziosmanpaşa", "Güngören", "Kadıköy", "Kağıthane",
+                     "Kartal", "Küçükçekmece", "Maltepe", "Pendik", "Sancaktepe", "Sarıyer", "Silivri", "Sultanbeyli",
+                     "Sultangazi", "Şile", "Şişli", "Tuzla", "Ümraniye", "Üsküdar", "Zeytinburnu"],
+        "Ankara": ["Akyurt", "Altındağ", "Ayaş", "Bala", "Beypazarı", "Çamlıdere", "Çankaya", "Çubuk", "Elmadağ",
+                   "Etimesgut", "Evren", "Gölbaşı", "Güdül", "Haymana", "Kahramankazan", "Kalecik", "Keçiören", "Kızılcahamam",
+                   "Mamak", "Nallıhan", "Polatlı", "Pursaklar", "Sincan", "Şereflikoçhisar", "Yenimahalle"],
+        "İzmir": ["Aliağa", "Balçova", "Bayındır", "Bayraklı", "Bergama", "Beydağ", "Bornova", "Buca", "Çeşme", "Çiğli",
+                  "Dikili", "Foça", "Gaziemir", "Güzelbahçe", "Karabağlar", "Karaburun", "Karşıyaka", "Kemalpaşa", "Kınık",
+                  "Kiraz", "Konak", "Menderes", "Menemen", "Narlıdere", "Ödemiş", "Seferihisar", "Selçuk", "Tire", "Torbalı", "Urla"],
+        "Antalya": ["Akseki", "Aksu", "Alanya", "Demre", "Döşemealtı", "Elmalı", "Finike", "Gazipaşa", "Gündoğmuş",
+                    "İbradı", "Kaş", "Kemer", "Kepez", "Konyaaltı", "Korkuteli", "Kumluca", "Manavgat", "Muratpaşa", "Serik"],
+        "Bursa": ["Büyükorhan", "Gemlik", "Gürsu", "Harmancık", "İnegöl", "İznik", "Karacabey", "Keles", "Kestel",
+                  "Mudanya", "Mustafakemalpaşa", "Nilüfer", "Orhaneli", "Orhangazi", "Osmangazi", "Yenişehir", "Yıldırım"]
+    }
+    
+    if city in static_districts:
+        return {
+            "city": city,
+            "districts": static_districts[city],
+            "total": len(static_districts[city]),
+            "source": "static"
+        }
+    
+    return {
+        "city": city,
+        "districts": [],
+        "total": 0,
+        "source": "not_found"
+    }
+
+
+@api_router.get("/locations/neighborhoods")
+async def get_neighborhoods(city: str, district: str):
+    """Get all neighborhoods of a district"""
+    # Try from database
+    neighborhoods = await db.locations_neighborhoods.find(
+        {"province": city, "district": district},
+        {"_id": 0}
+    ).sort("name", 1).to_list(500)
+    
+    if neighborhoods:
+        return {
+            "city": city,
+            "district": district,
+            "neighborhoods": [n["name"] for n in neighborhoods],
+            "total": len(neighborhoods),
+            "source": "database"
+        }
+    
+    # Fallback to static data for major districts
+    static_neighborhoods = {
+        "İstanbul": {
+            "Beşiktaş": ["Abbasağa", "Arnavutköy", "Bebek", "Balmumcu", "Cihannüma", "Dikilitaş", "Etiler", "Gayrettepe", "Konaklar", "Kuruçeşme", "Levent", "Muradiye", "Nisbetiye", "Ortaköy", "Sinanpaşa", "Türkali", "Ulus", "Vişnezade", "Yıldız"],
+            "Kadıköy": ["Acıbadem", "Bostancı", "Caferağa", "Caddebostan", "Erenköy", "Fenerbahçe", "Feneryolu", "Fikirtepe", "Göztepe", "Hasanpaşa", "Koşuyolu", "Kozyatağı", "Merdivenköy", "Moda", "Osmanağa", "Rasimpaşa", "Sahrayıcedit", "Suadiye", "Zühtüpaşa"],
+            "Şişli": ["Bomonti", "Cumhuriyet", "Dikilitaş", "Esentepe", "Fulya", "Halaskargazi", "Harbiye", "İnönü", "Kuştepe", "Mecidiyeköy", "Merkez", "Meşrutiyet", "Nişantaşı", "Osmanbey", "Paşa", "Teşvikiye"],
+            "Sarıyer": ["Bahçeköy", "Baltalimanı", "Büyükdere", "Çayırbaşı", "Darüşşafaka", "Emirgan", "Fatih Sultan Mehmet", "Ferahevler", "Garipçe", "İstinye", "Kanlıca", "Kilyos", "Kireçburnu", "Kumköy", "Maslak", "Maden", "Pınar", "Poligon", "Reşitpaşa", "Rumelifeneri", "Rumelihisarı", "Sarıyer Merkez", "Tarabya", "Uskumruköy", "Yeniköy", "Zekeriyaköy"],
+            "Üsküdar": ["Acıbadem", "Ahmediye", "Altunizade", "Aziz Mahmut Hüdayi", "Bahçelievler", "Beylerbeyi", "Bulgurlu", "Burhaniye", "Çengelköy", "Ferah", "Güzeltepe", "İcadiye", "Kandilli", "Kirazlıtepe", "Kısıklı", "Kuzguncuk", "Mimar Sinan", "Murat Reis", "Salacak", "Selamiali", "Sultantepe", "Ünalan", "Validei Atik", "Yavuztürk", "Zeynep Kamil"],
+            "Bakırköy": ["Ataköy", "Basınköy", "Cevizlik", "Kartaltepe", "Osmaniye", "Sakızağacı", "Şenlikköy", "Yeşilköy", "Yeşilyurt", "Zeytinlik", "Zuhuratbaba"],
+            "Fatih": ["Aksaray", "Akşemsettin", "Ali Kuşçu", "Atikali", "Balat", "Beyazıt", "Binbirdirek", "Cankurtaran", "Cerrahpaşa", "Demirtaş", "Eminsinan", "Haseki Sultan", "Hirkai Şerif", "Hobyar", "İskenderpaşa", "Karagümrük", "Katip Kasım", "Küçük Ayasofya", "Mercan", "Mevlanakapı", "Molla Fenari", "Molla Hüsrev", "Nişanca", "Sarıdemir", "Seyyid Ömer", "Silivrikapı", "Sultanahmet", "Süleymaniye", "Şehremini", "Topkapı", "Unkapanı", "Vefa", "Yavuz Sinan", "Yedikule", "Zeyrek"],
+        },
+        "Ankara": {
+            "Çankaya": ["Ayrancı", "Bahçelievler", "Balgat", "Beysukent", "Birlik", "Cebeci", "Çayyolu", "Çukurambar", "Dikmen", "Emek", "Esat", "Gaziosmanpaşa", "Gölbaşı", "Güvenevler", "İlker", "İncesu", "Kavaklidere", "Kızılay", "Kocatepe", "Kolej", "Korkutreis", "Korutürk", "Küçükesat", "Maltepe", "Mebuseviee", "Mebusevleri", "Mutlukent", "Oran", "Öveçler", "Seyranbağları", "Söğütözü", "Yaşamkent", "Yıldız", "Yıldızevler", "Yukarı Ayrancı"],
+            "Keçiören": ["Aktepe", "Atapark", "Ayvalı", "Bademlik", "Bağlum", "Basınevler", "Çaldıran", "Etlik", "Esertepe", "Kalaba", "Kamil Ocak", "Kanuni", "Karşıyaka", "Kuşcağız", "Pınarbaşı", "Pursaklar", "Şefkat", "Şenlik", "Ufuktepe", "Yayla"],
+        },
+        "İzmir": {
+            "Konak": ["Akdeniz", "Alsancak", "Basmane", "Çankaya", "Eşrefpaşa", "Göztepe", "Güzelyalı", "Hatay", "İnönü", "Kahramanlar", "Kemeraltı", "Konak", "Mimar Kemalettin", "Tepecik", "Umurbey", "Yenişehir"],
+            "Karşıyaka": ["Aksoy", "Atakent", "Bahariye", "Bahçelievler", "Bostanlı", "Cumhuriyet", "Dedebaşı", "Demirköprü", "Donanmacı", "Fikri Altay", "Goncalar", "İmbat", "Latife Hanım", "Mavişehir", "Nergiz", "Örnekköy", "Tersane", "Yalı", "Yamanlar"],
+            "Bornova": ["Altındağ", "Barbaros", "Birlik", "Çamdibi", "Doğanlar", "Ergene", "Erzene", "Evka", "Gürpınar", "İnönü", "Karacaoğlan", "Kazımdirik", "Kemalpaşa", "Laka", "Mevlana", "Naldöken", "Rafetpaşa", "Yeşilova"],
+        }
+    }
+    
+    if city in static_neighborhoods and district in static_neighborhoods[city]:
+        return {
+            "city": city,
+            "district": district,
+            "neighborhoods": static_neighborhoods[city][district],
+            "total": len(static_neighborhoods[city][district]),
+            "source": "static"
+        }
+    
+    return {
+        "city": city,
+        "district": district,
+        "neighborhoods": [],
+        "total": 0,
+        "source": "not_found"
+    }
+
+
+@api_router.post("/locations/seed-from-api")
+async def seed_locations_from_api():
+    """Seed location data from TurkiyeAPI - This fetches all 81 provinces with districts"""
+    import httpx
+    
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client_http:
+            # Fetch all provinces with their districts
+            response = await client_http.get("https://turkiyeapi.dev/api/v1/provinces?limit=100")
+            data = response.json()
+            
+            if data["status"] != "OK":
+                raise HTTPException(status_code=500, detail="Failed to fetch from TurkiyeAPI")
+            
+            provinces = data["data"]
+            
+            # Clear existing data
+            await db.locations_cities.delete_many({})
+            
+            # Insert all provinces with districts
+            cities_inserted = 0
+            total_districts = 0
+            
+            for province in provinces:
+                city_doc = {
+                    "id": str(uuid.uuid4()),
+                    "api_id": province["id"],
+                    "name": province["name"],
+                    "population": province.get("population"),
+                    "area": province.get("area"),
+                    "region": province.get("region", {}).get("tr"),
+                    "is_metropolitan": province.get("isMetropolitan", False),
+                    "is_coastal": province.get("isCoastal", False),
+                    "coordinates": province.get("coordinates"),
+                    "districts": province.get("districts", [])
+                }
+                
+                await db.locations_cities.insert_one(city_doc)
+                cities_inserted += 1
+                total_districts += len(province.get("districts", []))
+            
+            # Create indexes
+            await db.locations_cities.create_index("name")
+            await db.locations_cities.create_index("api_id")
+            
+            return {
+                "message": "Location data seeded successfully from TurkiyeAPI",
+                "cities_inserted": cities_inserted,
+                "total_districts": total_districts
+            }
+            
+    except Exception as e:
+        logger.error(f"Error seeding locations: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error seeding locations: {str(e)}")
+
+
+@api_router.post("/locations/seed-neighborhoods")
+async def seed_neighborhoods_from_api(city_name: Optional[str] = None, limit_per_request: int = 500):
+    """Seed neighborhood data from TurkiyeAPI for a specific city or all cities"""
+    import httpx
+    
+    try:
+        # Get city from database
+        query = {"name": city_name} if city_name else {}
+        cities = await db.locations_cities.find(query, {"_id": 0}).to_list(100)
+        
+        if not cities:
+            return {"message": "No cities found. Please run /locations/seed-from-api first"}
+        
+        total_neighborhoods = 0
+        cities_processed = []
+        
+        async with httpx.AsyncClient(timeout=120.0) as client_http:
+            for city in cities:
+                if "districts" not in city or not city["districts"]:
+                    continue
+                
+                city_neighborhoods = 0
+                
+                for district in city["districts"]:
+                    district_id = district["id"]
+                    
+                    # Fetch neighborhoods for this district
+                    try:
+                        response = await client_http.get(
+                            f"https://turkiyeapi.dev/api/v1/neighborhoods?districtId={district_id}&limit={limit_per_request}"
+                        )
+                        data = response.json()
+                        
+                        if data["status"] == "OK" and data["data"]:
+                            # Delete existing neighborhoods for this district
+                            await db.locations_neighborhoods.delete_many({
+                                "province": city["name"],
+                                "district": district["name"]
+                            })
+                            
+                            # Insert new neighborhoods
+                            for neighborhood in data["data"]:
+                                neighborhood_doc = {
+                                    "id": str(uuid.uuid4()),
+                                    "api_id": neighborhood["id"],
+                                    "province_id": neighborhood["provinceId"],
+                                    "district_id": neighborhood["districtId"],
+                                    "province": neighborhood["province"],
+                                    "district": neighborhood["district"],
+                                    "name": neighborhood["name"],
+                                    "population": neighborhood.get("population")
+                                }
+                                await db.locations_neighborhoods.insert_one(neighborhood_doc)
+                                city_neighborhoods += 1
+                                total_neighborhoods += 1
+                    except Exception as e:
+                        logger.warning(f"Error fetching neighborhoods for {district['name']}: {str(e)}")
+                        continue
+                
+                cities_processed.append({
+                    "city": city["name"],
+                    "neighborhoods_added": city_neighborhoods
+                })
+                
+                # If processing single city, break after
+                if city_name:
+                    break
+        
+        # Create indexes
+        await db.locations_neighborhoods.create_index([("province", 1), ("district", 1)])
+        await db.locations_neighborhoods.create_index("name")
+        
+        return {
+            "message": "Neighborhood data seeded successfully",
+            "total_neighborhoods": total_neighborhoods,
+            "cities_processed": cities_processed
+        }
+        
+    except Exception as e:
+        logger.error(f"Error seeding neighborhoods: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error seeding neighborhoods: {str(e)}")
+
+
+@api_router.get("/locations/stats")
+async def get_location_stats():
+    """Get statistics about location data"""
+    cities_count = await db.locations_cities.count_documents({})
+    neighborhoods_count = await db.locations_neighborhoods.count_documents({})
+    
+    # Get sample cities
+    sample_cities = await db.locations_cities.find({}, {"_id": 0, "name": 1, "districts": 1}).limit(5).to_list(5)
+    sample_cities_summary = [
+        {"name": c["name"], "district_count": len(c.get("districts", []))} 
+        for c in sample_cities
+    ]
+    
+    return {
+        "total_cities": cities_count,
+        "total_neighborhoods": neighborhoods_count,
+        "sample_cities": sample_cities_summary,
+        "data_ready": cities_count > 0
+    }
+
+
 # Include router and add CORS
 app.include_router(api_router)
 

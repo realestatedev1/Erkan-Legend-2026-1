@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { propertyAPI } from '../lib/api';
-import { getCities, getDistricts, getNeighborhoods } from '../data/turkeyLocations';
+import { propertyAPI, locationAPI } from '../lib/api';
 
 const Properties = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,19 +18,61 @@ const Properties = () => {
     rooms: searchParams.get('rooms') || '',
   });
 
-  // Dinamik listeler
-  const [cities] = useState(getCities());
+  // Dinamik listeler - API'den yüklenecek
+  const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [neighborhoods, setNeighborhoods] = useState([]);
+  const [loadingLocations, setLoadingLocations] = useState(false);
+
+  // İlk yüklemede şehirleri al
+  useEffect(() => {
+    loadCities();
+  }, []);
 
   useEffect(() => {
     loadProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // Şehir değiştiğinde ilçeleri güncelle
+  // Şehir değiştiğinde ilçeleri API'den yükle
   useEffect(() => {
     if (filters.city) {
-      const districtList = getDistricts(filters.city);
+      loadDistricts(filters.city);
+    } else {
+      setDistricts([]);
+      setNeighborhoods([]);
+      setFilters(prev => ({ ...prev, district: '', neighborhood: '' }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.city]);
+
+  // İlçe değiştiğinde mahalleleri API'den yükle
+  useEffect(() => {
+    if (filters.city && filters.district) {
+      loadNeighborhoods(filters.city, filters.district);
+    } else {
+      setNeighborhoods([]);
+      setFilters(prev => ({ ...prev, neighborhood: '' }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.district]);
+
+  const loadCities = async () => {
+    try {
+      const response = await locationAPI.getCities();
+      setCities(response.data.cities || []);
+    } catch (error) {
+      console.error('Failed to load cities:', error);
+      // Fallback to static list if API fails
+      setCities(['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Bursa', 'Adana']);
+    }
+  };
+
+  const loadDistricts = async (city) => {
+    setLoadingLocations(true);
+    try {
+      const response = await locationAPI.getDistricts(city);
+      const districtList = response.data.districts || [];
       setDistricts(districtList);
       
       // Eğer seçili ilçe yeni şehirde yoksa temizle
@@ -39,28 +80,32 @@ const Properties = () => {
         setFilters(prev => ({ ...prev, district: '', neighborhood: '' }));
         setNeighborhoods([]);
       }
-    } else {
+    } catch (error) {
+      console.error('Failed to load districts:', error);
       setDistricts([]);
-      setNeighborhoods([]);
-      setFilters(prev => ({ ...prev, district: '', neighborhood: '' }));
+    } finally {
+      setLoadingLocations(false);
     }
-  }, [filters.city]);
+  };
 
-  // İlçe değiştiğinde mahalleleri güncelle
-  useEffect(() => {
-    if (filters.city && filters.district) {
-      const neighborhoodList = getNeighborhoods(filters.city, filters.district);
+  const loadNeighborhoods = async (city, district) => {
+    setLoadingLocations(true);
+    try {
+      const response = await locationAPI.getNeighborhoods(city, district);
+      const neighborhoodList = response.data.neighborhoods || [];
       setNeighborhoods(neighborhoodList);
       
       // Eğer seçili mahalle yeni ilçede yoksa temizle
       if (filters.neighborhood && !neighborhoodList.includes(filters.neighborhood)) {
         setFilters(prev => ({ ...prev, neighborhood: '' }));
       }
-    } else {
+    } catch (error) {
+      console.error('Failed to load neighborhoods:', error);
       setNeighborhoods([]);
-      setFilters(prev => ({ ...prev, neighborhood: '' }));
+    } finally {
+      setLoadingLocations(false);
     }
-  }, [filters.city, filters.district]);
+  };
 
   const loadProperties = async () => {
     setLoading(true);

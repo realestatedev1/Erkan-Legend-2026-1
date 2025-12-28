@@ -15,8 +15,8 @@ const Home = () => {
   });
   const navigate = useNavigate();
 
-  // Dinamik lokasyon listeleri - API'den yüklenecek
-  const [cities, setCities] = useState([]);
+  // Dinamik lokasyon listeleri - API'den yüklenecek, varsayılan değerlerle başla
+  const [cities, setCities] = useState(['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Bursa', 'Adana']);
   const [districts, setDistricts] = useState([]);
   const [neighborhoods, setNeighborhoods] = useState([]);
 
@@ -32,7 +32,19 @@ const Home = () => {
 
   useEffect(() => {
     loadFeaturedProperties();
-    loadCities();
+    
+    // Şehirleri API'den yükle
+    const fetchCities = async () => {
+      try {
+        const response = await locationAPI.getCities();
+        if (response.data && response.data.cities && response.data.cities.length > 0) {
+          setCities(response.data.cities);
+        }
+      } catch (error) {
+        console.error('Failed to load cities from API:', error);
+      }
+    };
+    fetchCities();
     
     // Auto-slide every 5 seconds
     const slideInterval = setInterval(() => {
@@ -42,18 +54,6 @@ const Home = () => {
     return () => clearInterval(slideInterval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Şehirleri API'den yükle
-  const loadCities = async () => {
-    try {
-      const response = await locationAPI.getCities();
-      setCities(response.data.cities || []);
-    } catch (error) {
-      console.error('Failed to load cities:', error);
-      // Fallback
-      setCities(['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Bursa', 'Adana']);
-    }
-  };
 
   // Şehir değiştiğinde ilçeleri API'den yükle
   useEffect(() => {

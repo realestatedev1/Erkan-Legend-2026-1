@@ -67,19 +67,6 @@ const Properties = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.district]);
 
-  const loadCities = async () => {
-    try {
-      console.log('Loading cities from API...');
-      const response = await locationAPI.getCities();
-      console.log('Cities API response:', response.data);
-      setCities(response.data.cities || []);
-    } catch (error) {
-      console.error('Failed to load cities:', error);
-      // Fallback to static list if API fails
-      setCities(['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Bursa', 'Adana']);
-    }
-  };
-
   const loadDistricts = async (city) => {
     setLoadingLocations(true);
     try {

@@ -27,14 +27,25 @@ const Properties = () => {
   // İlk yüklemede şehirleri al (async) - direkt fetch ile
   useEffect(() => {
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+    console.log('BACKEND_URL:', BACKEND_URL);
+    window.__CITIES_LOADING = true;
     fetch(`${BACKEND_URL}/api/locations/cities`)
-      .then(res => res.json())
+      .then(res => {
+        console.log('Cities API response status:', res.status);
+        return res.json();
+      })
       .then(data => {
+        console.log('Cities data:', data);
+        window.__CITIES_DATA = data;
         if (data && data.cities && data.cities.length > 0) {
           setCities(data.cities);
+          window.__CITIES_LOADED = data.cities.length;
         }
       })
-      .catch(err => console.error('Failed to load cities:', err));
+      .catch(err => {
+        console.error('Failed to load cities:', err);
+        window.__CITIES_ERROR = err.message;
+      });
   }, []);
 
   useEffect(() => {

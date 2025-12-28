@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { propertyAPI, franchiseAPI } from '../lib/api';
-import { getCities, getDistricts, getNeighborhoods } from '../data/turkeyLocations';
+import { propertyAPI, franchiseAPI, locationAPI } from '../lib/api';
 
 const Home = () => {
   const [featuredProperties, setFeaturedProperties] = useState([]);
@@ -16,8 +15,8 @@ const Home = () => {
   });
   const navigate = useNavigate();
 
-  // Dinamik lokasyon listeleri
-  const [cities] = useState(getCities());
+  // Dinamik lokasyon listeleri - API'den yüklenecek
+  const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [neighborhoods, setNeighborhoods] = useState([]);
 
@@ -33,6 +32,7 @@ const Home = () => {
 
   useEffect(() => {
     loadFeaturedProperties();
+    loadCities();
     
     // Auto-slide every 5 seconds
     const slideInterval = setInterval(() => {
@@ -40,28 +40,61 @@ const Home = () => {
     }, 5000);
 
     return () => clearInterval(slideInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Şehir değiştiğinde ilçeleri güncelle
+  // Şehirleri API'den yükle
+  const loadCities = async () => {
+    try {
+      const response = await locationAPI.getCities();
+      setCities(response.data.cities || []);
+    } catch (error) {
+      console.error('Failed to load cities:', error);
+      // Fallback
+      setCities(['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Bursa', 'Adana']);
+    }
+  };
+
+  // Şehir değiştiğinde ilçeleri API'den yükle
   useEffect(() => {
     if (searchParams.city) {
-      const districtList = getDistricts(searchParams.city);
-      setDistricts(districtList);
+      loadDistricts(searchParams.city);
     } else {
       setDistricts([]);
       setNeighborhoods([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.city]);
 
-  // İlçe değiştiğinde mahalleleri güncelle
+  // İlçe değiştiğinde mahalleleri API'den yükle
   useEffect(() => {
     if (searchParams.city && searchParams.district) {
-      const neighborhoodList = getNeighborhoods(searchParams.city, searchParams.district);
-      setNeighborhoods(neighborhoodList);
+      loadNeighborhoods(searchParams.city, searchParams.district);
     } else {
       setNeighborhoods([]);
     }
-  }, [searchParams.city, searchParams.district]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.district]);
+
+  const loadDistricts = async (city) => {
+    try {
+      const response = await locationAPI.getDistricts(city);
+      setDistricts(response.data.districts || []);
+    } catch (error) {
+      console.error('Failed to load districts:', error);
+      setDistricts([]);
+    }
+  };
+
+  const loadNeighborhoods = async (city, district) => {
+    try {
+      const response = await locationAPI.getNeighborhoods(city, district);
+      setNeighborhoods(response.data.neighborhoods || []);
+    } catch (error) {
+      console.error('Failed to load neighborhoods:', error);
+      setNeighborhoods([]);
+    }
+  };
 
   const loadFeaturedProperties = async () => {
     try {

@@ -52,8 +52,15 @@ module.exports = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
-  		},
+			},
+			'legend-red': '#ED1C24',
+			'legend-dark': '#1E1E1E',
+			'legend-grey': '#E6E6E6'
+		},
+		fontFamily: {
+			'heading': ['Arial Black', 'sans-serif'],
+			'body': ['Arial', 'Helvetica', 'sans-serif']
+		},
   		keyframes: {
   			'accordion-down': {
   				from: {

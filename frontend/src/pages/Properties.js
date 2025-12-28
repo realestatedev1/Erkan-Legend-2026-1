@@ -19,14 +19,24 @@ const Properties = () => {
   });
 
   // Dinamik listeler - API'den yüklenecek
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState(['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Bursa', 'Adana']);
   const [districts, setDistricts] = useState([]);
   const [neighborhoods, setNeighborhoods] = useState([]);
   const [loadingLocations, setLoadingLocations] = useState(false);
 
-  // İlk yüklemede şehirleri al
+  // İlk yüklemede şehirleri al (async)
   useEffect(() => {
-    loadCities();
+    const fetchCities = async () => {
+      try {
+        const response = await locationAPI.getCities();
+        if (response.data && response.data.cities && response.data.cities.length > 0) {
+          setCities(response.data.cities);
+        }
+      } catch (error) {
+        console.error('Failed to load cities from API, using defaults:', error);
+      }
+    };
+    fetchCities();
   }, []);
 
   useEffect(() => {

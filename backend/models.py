@@ -72,17 +72,49 @@ class Property(BaseModel):
     address: str
     latitude: Optional[float] = None
     longitude: Optional[float] = None
-    area_sqm: Optional[float] = None
+    
+    # Alan bilgileri
+    area_gross: Optional[float] = None  # Brüt m²
+    area_net: Optional[float] = None  # Net m²
+    area_sqm: Optional[float] = None  # Eski alan (geriye uyumluluk)
+    
+    # Oda bilgileri
     rooms: Optional[str] = None  # "2+1", "3+1", etc.
     bathrooms: Optional[int] = None
-    floor: Optional[str] = None
-    total_floors: Optional[int] = None
-    age: Optional[int] = None
-    heating: Optional[str] = None
-    furnished: Optional[bool] = None
-    parking: Optional[bool] = None
+    
+    # Kat bilgileri
+    floor: Optional[str] = None  # Bulunduğu kat
+    total_floors: Optional[int] = None  # Toplam kat sayısı
+    
+    # Bina bilgileri
+    age: Optional[int] = None  # Bina yaşı
+    building_type: Optional[str] = None  # "apartment", "residence", "villa", etc.
+    
+    # Isınma ve özellikler
+    heating: Optional[str] = None  # "dogalgaz", "merkezi", "kombi", "soba", "klima"
+    furnished: Optional[str] = None  # "evet", "hayir", "kismen"
+    usage_status: Optional[str] = None  # "bos", "kiracili", "mulk_sahibi"
+    
+    # Ek özellikler
+    parking: Optional[str] = None  # "yok", "acik", "kapali"
     balcony: Optional[bool] = None
     elevator: Optional[bool] = None
+    in_complex: Optional[bool] = None  # Site içinde
+    smart_home: Optional[bool] = None  # Akıllı ev
+    security: Optional[bool] = None  # Güvenlik
+    pool: Optional[bool] = None  # Havuz
+    gym: Optional[bool] = None  # Spor salonu
+    garden: Optional[bool] = None  # Bahçe
+    terrace: Optional[bool] = None  # Teras
+    
+    # Finansal bilgiler
+    dues: Optional[float] = None  # Aidat
+    credit_eligible: Optional[bool] = None  # Krediye uygun
+    exchange: Optional[bool] = None  # Takas
+    
+    # Cephe bilgisi
+    facade: Optional[str] = None  # "kuzey", "guney", "dogu", "bati", "kuzey-guney", etc.
+    
     images: List[str] = []
     features: List[str] = []
     franchise_id: str

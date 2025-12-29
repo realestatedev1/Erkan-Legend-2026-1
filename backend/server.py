@@ -219,17 +219,44 @@ async def get_properties(
     category: Optional[str] = None,
     city: Optional[str] = None,
     district: Optional[str] = None,
+    neighborhood: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
     rooms: Optional[str] = None,
+    # Yeni filtreler
+    min_area: Optional[float] = None,
+    max_area: Optional[float] = None,
+    min_age: Optional[int] = None,
+    max_age: Optional[int] = None,
+    floor: Optional[str] = None,
+    min_floor: Optional[int] = None,
+    max_floor: Optional[int] = None,
+    total_floors_min: Optional[int] = None,
+    total_floors_max: Optional[int] = None,
+    heating: Optional[str] = None,
+    furnished: Optional[str] = None,
+    parking: Optional[str] = None,
+    balcony: Optional[bool] = None,
+    elevator: Optional[bool] = None,
+    in_complex: Optional[bool] = None,
+    credit_eligible: Optional[bool] = None,
+    exchange: Optional[bool] = None,
+    usage_status: Optional[str] = None,
+    facade: Optional[str] = None,
+    security: Optional[bool] = None,
+    pool: Optional[bool] = None,
+    gym: Optional[bool] = None,
+    garden: Optional[bool] = None,
+    # Genel
     franchise_id: Optional[str] = None,
     featured_only: bool = False,
     limit: int = 20,
     skip: int = 0
 ):
-    """Get properties with filters (public endpoint)"""
+    """Get properties with advanced filters (public endpoint)"""
     query = {"active": True}
     
+    # Temel filtreler
     if property_type:
         query["property_type"] = property_type
     if category:
@@ -238,13 +265,8 @@ async def get_properties(
         query["city"] = city
     if district:
         query["district"] = district
-    if min_price:
-        query["price"] = {"$gte": min_price}
-    if max_price:
-        if "price" in query:
-            query["price"]["$lte"] = max_price
-        else:
-            query["price"] = {"$lte": max_price}
+    if neighborhood:
+        query["neighborhood"] = neighborhood
     if rooms:
         query["rooms"] = rooms
     if franchise_id:
@@ -252,7 +274,78 @@ async def get_properties(
     if featured_only:
         query["featured"] = True
     
-    properties = await db.properties.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
+    # Fiyat filtresi
+    if min_price or max_price:
+        query["price"] = {}
+        if min_price:
+            query["price"]["$gte"] = min_price
+        if max_price:
+            query["price"]["$lte"] = max_price
+    
+    # Alan (m²) filtresi
+    if min_area or max_area:
+        area_query = {}
+        if min_area:
+            area_query["$gte"] = min_area
+        if max_area:
+            area_query["$lte"] = max_area
+        query["$or"] = [
+            {"area_gross": area_query},
+            {"area_net": area_query},
+            {"area_sqm": area_query}
+        ]
+    
+    # Bina yaşı filtresi
+    if min_age is not None or max_age is not None:
+        query["age"] = {}
+        if min_age is not None:
+            query["age"]["$gte"] = min_age
+        if max_age is not None:
+            query["age"]["$lte"] = max_age
+    
+    # Kat filtreleri
+    if floor:
+        query["floor"] = floor
+    if total_floors_min or total_floors_max:
+        query["total_floors"] = {}
+        if total_floors_min:
+            query["total_floors"]["$gte"] = total_floors_min
+        if total_floors_max:
+            query["total_floors"]["$lte"] = total_floors_max
+    
+    # Özellik filtreleri
+    if heating:
+        query["heating"] = heating
+    if furnished:
+        query["furnished"] = furnished
+    if parking:
+        query["parking"] = parking
+    if usage_status:
+        query["usage_status"] = usage_status
+    if facade:
+        query["facade"] = facade
+    
+    # Boolean filtreler
+    if balcony is not None:
+        query["balcony"] = balcony
+    if elevator is not None:
+        query["elevator"] = elevator
+    if in_complex is not None:
+        query["in_complex"] = in_complex
+    if credit_eligible is not None:
+        query["credit_eligible"] = credit_eligible
+    if exchange is not None:
+        query["exchange"] = exchange
+    if security is not None:
+        query["security"] = security
+    if pool is not None:
+        query["pool"] = pool
+    if gym is not None:
+        query["gym"] = gym
+    if garden is not None:
+        query["garden"] = garden
+    
+    properties = await db.properties.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
     total = await db.properties.count_documents(query)
     
     # Add franchise info to each property

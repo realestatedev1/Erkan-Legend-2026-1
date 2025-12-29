@@ -139,17 +139,49 @@ class PropertyCreate(BaseModel):
     address: str
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    
+    # Alan bilgileri
+    area_gross: Optional[float] = None
+    area_net: Optional[float] = None
     area_sqm: Optional[float] = None
+    
+    # Oda bilgileri
     rooms: Optional[str] = None
     bathrooms: Optional[int] = None
+    
+    # Kat bilgileri
     floor: Optional[str] = None
     total_floors: Optional[int] = None
+    
+    # Bina bilgileri
     age: Optional[int] = None
+    building_type: Optional[str] = None
+    
+    # Isınma ve özellikler
     heating: Optional[str] = None
-    furnished: Optional[bool] = None
-    parking: Optional[bool] = None
+    furnished: Optional[str] = None
+    usage_status: Optional[str] = None
+    
+    # Ek özellikler
+    parking: Optional[str] = None
     balcony: Optional[bool] = None
     elevator: Optional[bool] = None
+    in_complex: Optional[bool] = None
+    smart_home: Optional[bool] = None
+    security: Optional[bool] = None
+    pool: Optional[bool] = None
+    gym: Optional[bool] = None
+    garden: Optional[bool] = None
+    terrace: Optional[bool] = None
+    
+    # Finansal bilgiler
+    dues: Optional[float] = None
+    credit_eligible: Optional[bool] = None
+    exchange: Optional[bool] = None
+    
+    # Cephe bilgisi
+    facade: Optional[str] = None
+    
     features: List[str] = []
     featured: bool = False
 

@@ -374,3 +374,4 @@ const Home = () => {
 };
 
 export default Home;
+// Force bundle refresh - Mon Dec 29 09:27:07 UTC 2025

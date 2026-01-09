@@ -326,18 +326,18 @@ const Home = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Hizmetlerimiz</h2>
-            <p className="text-gray-600">Kapsamlı gayrimenkul çözümleri</p>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">{t('home.services.title')}</h2>
+            <p className="text-gray-600">{t('home.services.subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: 'Konut Satış & Kiralama', desc: 'Hayalinizdeki evi bulmanızda yanınızdayız' },
-              { title: 'Ticari Alan', desc: 'İşletmeniz için ideal lokasyonlar' },
-              { title: 'Arazi & Arsa', desc: 'Yatırım fırsatları' },
-              { title: 'Danışmanlık', desc: 'Uzman ekibimizle profesyonel destek' },
-              { title: 'Yönetim Hizmetleri', desc: 'Gayrimenkullerinizin profesyonel yönetimi' },
-              { title: 'Değerleme', desc: 'Güvenilir değerleme raporları' },
+              { title: t('home.services.residential'), desc: t('home.services.residentialDesc') },
+              { title: t('home.services.commercial'), desc: t('home.services.commercialDesc') },
+              { title: t('home.services.land'), desc: t('home.services.landDesc') },
+              { title: t('home.services.consulting'), desc: t('home.services.consultingDesc') },
+              { title: t('home.services.management'), desc: t('home.services.managementDesc') },
+              { title: t('home.services.valuation'), desc: t('home.services.valuationDesc') },
             ].map((service, index) => (
               <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{service.title}</h3>
@@ -351,7 +351,7 @@ const Home = () => {
               to="/services"
               className="inline-block bg-red-600 text-white px-8 py-3 rounded hover:bg-red-700 transition font-semibold"
             >
-              Detaylı Bilgi
+              {t('home.services.moreInfo')}
             </Link>
           </div>
         </div>
@@ -360,14 +360,14 @@ const Home = () => {
       {/* Franchise CTA */}
       <section className="py-20 bg-gradient-to-r from-gray-900 to-red-900 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">Franchise Olun</h2>
-          <p className="text-xl mb-8">Legend Cities ailesine katılın ve başarı hikayenizi yazın</p>
+          <h2 className="text-4xl font-bold mb-4">{t('home.franchise.title')}</h2>
+          <p className="text-xl mb-8">{t('home.franchise.subtitle')}</p>
           <Link
             to="/franchise"
             className="inline-block bg-white text-red-600 px-8 py-3 rounded hover:bg-gray-100 transition font-semibold"
             data-testid="franchise-cta"
           >
-            Başvuru Yap
+            {t('home.franchise.apply')}
           </Link>
         </div>
       </section>

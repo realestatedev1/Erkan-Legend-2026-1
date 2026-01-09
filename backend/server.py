@@ -697,7 +697,7 @@ async def seed_initial_data():
             "address": "Nisbetiye Mahallesi Nisbetiye Caddesi No:28/16",
             "city": "İstanbul",
             "district": "Beşiktaş",
-            "phone": "+90 212 324 0 444",
+            "phone": "+90 212 324 0 444\n+90 532 212 51 47",
             "email": "etiler@legendcities.com.tr",
             "manager_name": "Erkan Çankaya",
             "latitude": 41.0766,

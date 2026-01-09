@@ -274,7 +274,15 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredProperties.map((property) => (
+            {featuredProperties.map((property) => {
+              // Check if image URL is absolute or relative
+              const imageUrl = property.images && property.images.length > 0
+                ? (property.images[0].startsWith('http') 
+                    ? property.images[0] 
+                    : `${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`)
+                : null;
+              
+              return (
               <Link
                 key={property.id}
                 to={`/properties/${property.id}`}
@@ -282,9 +290,9 @@ const Home = () => {
                 data-testid={`property-card-${property.id}`}
               >
                 <div className="h-48 bg-gray-300">
-                  {property.images && property.images.length > 0 ? (
+                  {imageUrl ? (
                     <img
-                      src={`${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`}
+                      src={imageUrl}
                       alt={property.title}
                       className="w-full h-full object-cover"
                     />
@@ -307,7 +315,7 @@ const Home = () => {
                   </div>
                 </div>
               </Link>
-            ))}
+            );})}
           </div>
 
           <div className="text-center mt-12">

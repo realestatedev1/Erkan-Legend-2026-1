@@ -861,11 +861,11 @@ const PropertyManagement = () => {
                     <div>
                       <label className="block text-sm font-semibold mb-2">Aidat (Aylık)</label>
                       <input 
-                        type="number" 
-                        placeholder="Aylık aidat tutarı" 
+                        type="text" 
+                        placeholder="1.500" 
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-600" 
-                        value={formData.dues} 
-                        onChange={(e) => handleChange('dues', e.target.value)} 
+                        value={formatPriceDisplay(formData.dues)} 
+                        onChange={(e) => handlePriceChange('dues', e.target.value)} 
                       />
                     </div>
                   </div>

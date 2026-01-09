@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { FavoritesProvider } from './context/FavoritesContext';
+import { CompareProvider } from './context/CompareContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
@@ -17,6 +19,8 @@ import Franchise from './pages/Franchise';
 import Career from './pages/Career';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
+import Favorites from './pages/Favorites';
+import Compare from './pages/Compare';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';

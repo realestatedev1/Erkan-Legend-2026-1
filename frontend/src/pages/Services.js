@@ -1,36 +1,70 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Services = () => {
+  const { t } = useTranslation();
+
   const services = [
     {
-      title: 'Konut Satış & Kiralama',
-      description: 'Hayalinizdeki evi bulmanızda profesyonel destek sunuyoruz. Geniş portföyümüzle ihtiyaçlarınıza en uygun konutu bulmak için yanınızdayız.',
-      features: ['Satılık konut', 'Kiralık konut', 'Danışmanlık', 'Hukuki destek']
+      title: t('services.residential'),
+      description: t('services.residentialDesc'),
+      features: [
+        t('services.residentialFeature1'),
+        t('services.residentialFeature2'),
+        t('services.residentialFeature3'),
+        t('services.residentialFeature4')
+      ]
     },
     {
-      title: 'Ticari Alan Satış & Kiralama',
-      description: 'İşletmeniz için ideal lokasyonda ticari alanlar. Ofis, mağaza, iş merkezi gibi çeşitli seçenekler.',
-      features: ['Ofis alanları', 'Mağaza', 'İş merkezi', 'Depo ve lojistik alanlar']
+      title: t('services.commercial'),
+      description: t('services.commercialDesc'),
+      features: [
+        t('services.commercialFeature1'),
+        t('services.commercialFeature2'),
+        t('services.commercialFeature3'),
+        t('services.commercialFeature4')
+      ]
     },
     {
-      title: 'Arazi & Arsa Satışı',
-      description: 'Yatırım fırsatları ve inaat projeleri için uygun arsalar. Detaylı piyasa analizi ile doğru yatırım kararı.',
-      features: ['Konut arsası', 'Ticari arsa', 'Tarım arazisi', 'Yatırım danışmanlığı']
+      title: t('services.land'),
+      description: t('services.landDesc'),
+      features: [
+        t('services.landFeature1'),
+        t('services.landFeature2'),
+        t('services.landFeature3'),
+        t('services.landFeature4')
+      ]
     },
     {
-      title: 'Gayrimenkul Danışmanlığı',
-      description: 'Uzman ekibimizle tüm gayrimenkul işlemlerinizde profesyonel destek. Piyasa analizi, değerleme ve yatırım danışmanlığı.',
-      features: ['Piyasa analizi', 'Yatırım danışmanlığı', 'Hukuki süreç yönetimi', 'Finansman desteği']
+      title: t('services.consulting'),
+      description: t('services.consultingDesc'),
+      features: [
+        t('services.consultingFeature1'),
+        t('services.consultingFeature2'),
+        t('services.consultingFeature3'),
+        t('services.consultingFeature4')
+      ]
     },
     {
-      title: 'Yönetim Hizmetleri',
-      description: 'Gayrimenkullerinizin profesyonel yönetimi. Kira tahsilatından bakım-onarıma kadar tüm hizmetler.',
-      features: ['Kira yönetimi', 'Bakım-onarım', 'Kiracı ilişkileri', 'Mali raporlama']
+      title: t('services.management'),
+      description: t('services.managementDesc'),
+      features: [
+        t('services.managementFeature1'),
+        t('services.managementFeature2'),
+        t('services.managementFeature3'),
+        t('services.managementFeature4')
+      ]
     },
     {
-      title: 'Değerleme',
-      description: 'Güvenilir ve profesyonel gayrimenkul değerleme hizmetleri. Lisanslı değerleme uzmanlarımızla detaylı raporlar.',
-      features: ['Piyasa değeri analizi', 'Yatırım değerlemesi', 'Sigorta değerlemesi', 'Resmi raporlar']
+      title: t('services.valuation'),
+      description: t('services.valuationDesc'),
+      features: [
+        t('services.valuationFeature1'),
+        t('services.valuationFeature2'),
+        t('services.valuationFeature3'),
+        t('services.valuationFeature4')
+      ]
     },
   ];
 
@@ -38,10 +72,8 @@ const Services = () => {
     <div className="min-h-screen py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">Hizmetlerimiz</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            1962'den beri gayrimenkul sektöründe sunduğumuz profesyonel hizmetler ile yanınızdayız
-          </p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">{t('services.title')}</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">{t('services.subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -62,11 +94,11 @@ const Services = () => {
         </div>
 
         <div className="mt-16 bg-gradient-to-r from-red-600 to-gray-900 text-white rounded-lg p-12 text-center">
-          <h2 className="text-3xl font-bold mb-4">Daha Fazla Bilgi İster misiniz?</h2>
-          <p className="mb-8 text-lg">Hizmetlerimiz hakkında detaylı bilgi almak için bize ulaşın</p>
-          <a href="/contact" className="inline-block bg-white text-red-600 px-8 py-3 rounded hover:bg-gray-100 transition font-semibold">
-            İletişime Geç
-          </a>
+          <h2 className="text-3xl font-bold mb-4">{t('services.moreInfoTitle')}</h2>
+          <p className="mb-8 text-lg">{t('services.moreInfoDesc')}</p>
+          <Link to="/contact" className="inline-block bg-white text-red-600 px-8 py-3 rounded hover:bg-gray-100 transition font-semibold">
+            {t('services.contactUs')}
+          </Link>
         </div>
       </div>
     </div>

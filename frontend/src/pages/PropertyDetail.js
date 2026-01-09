@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { propertyAPI, contactAPI } from '../lib/api';
 
 const PropertyDetail = () => {
   const { id } = useParams();
+  const { t } = useTranslation();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
@@ -44,7 +46,7 @@ const PropertyDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Yükleniyor...</div>
+        <div className="text-xl">{t('propertyDetail.loading')}</div>
       </div>
     );
   }
@@ -52,7 +54,7 @@ const PropertyDetail = () => {
   if (!property) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">İlan bulunamadı</div>
+        <div className="text-xl">{t('propertyDetail.notFound')}</div>
       </div>
     );
   }
@@ -66,9 +68,9 @@ const PropertyDetail = () => {
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
         <div className="mb-4 text-sm text-gray-600">
-          <Link to="/" className="hover:text-red-600">Ana Sayfa</Link>
+          <Link to="/" className="hover:text-red-600">{t('propertyDetail.home')}</Link>
           {' > '}
-          <Link to="/properties" className="hover:text-red-600">İlanlar</Link>
+          <Link to="/properties" className="hover:text-red-600">{t('propertyDetail.properties')}</Link>
           {' > '}
           <span>{property.title}</span>
         </div>
@@ -114,7 +116,7 @@ const PropertyDetail = () => {
               <div className="text-4xl font-bold text-red-600 mb-6">
                 {property.price.toLocaleString('tr-TR')} {property.currency}
                 <span className="text-lg font-normal text-gray-600 ml-2">
-                  ({property.property_type === 'sale' ? 'Satılık' : 'Kiralık'})
+                  ({property.property_type === 'sale' ? t('propertyDetail.forSale') : t('propertyDetail.forRent')})
                 </span>
               </div>
 
@@ -122,37 +124,37 @@ const PropertyDetail = () => {
                 {property.rooms && (
                   <div className="text-center p-3 bg-gray-50 rounded">
                     <div className="font-bold text-gray-800">{property.rooms}</div>
-                    <div className="text-sm text-gray-600">Oda Sayısı</div>
+                    <div className="text-sm text-gray-600">{t('propertyDetail.rooms')}</div>
                   </div>
                 )}
                 {property.area_sqm && (
                   <div className="text-center p-3 bg-gray-50 rounded">
                     <div className="font-bold text-gray-800">{property.area_sqm}m²</div>
-                    <div className="text-sm text-gray-600">Alan</div>
+                    <div className="text-sm text-gray-600">{t('propertyDetail.area')}</div>
                   </div>
                 )}
                 {property.floor && (
                   <div className="text-center p-3 bg-gray-50 rounded">
                     <div className="font-bold text-gray-800">{property.floor}</div>
-                    <div className="text-sm text-gray-600">Kat</div>
+                    <div className="text-sm text-gray-600">{t('propertyDetail.floor')}</div>
                   </div>
                 )}
                 {property.age !== null && (
                   <div className="text-center p-3 bg-gray-50 rounded">
                     <div className="font-bold text-gray-800">{property.age}</div>
-                    <div className="text-sm text-gray-600">Bina Yaşı</div>
+                    <div className="text-sm text-gray-600">{t('propertyDetail.buildingAge')}</div>
                   </div>
                 )}
               </div>
 
               <div className="border-t pt-6">
-                <h3 className="font-bold text-xl mb-3">İlan Açıklaması</h3>
+                <h3 className="font-bold text-xl mb-3">{t('propertyDetail.description')}</h3>
                 <p className="text-gray-700 whitespace-pre-line">{property.description}</p>
               </div>
 
               {property.features && property.features.length > 0 && (
                 <div className="border-t pt-6 mt-6">
-                  <h3 className="font-bold text-xl mb-3">Özellikler</h3>
+                  <h3 className="font-bold text-xl mb-3">{t('propertyDetail.features')}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {property.features.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2 text-gray-700">
@@ -171,24 +173,24 @@ const PropertyDetail = () => {
             {/* Franchise Info */}
             {property.franchise_info && (
               <div className="bg-white rounded-lg shadow-md p-6 mb-6 sticky top-24">
-                <h3 className="font-bold text-xl mb-4">Ofis Bilgileri</h3>
+                <h3 className="font-bold text-xl mb-4">{t('propertyDetail.officeInfo')}</h3>
                 <div className="space-y-3">
                   <p className="font-semibold text-gray-800">
                     {property.franchise_info.office_name}
                   </p>
                   <p className="text-gray-600">
-                    <strong>Telefon:</strong><br />
+                    <strong>{t('propertyDetail.phone')}:</strong><br />
                     {property.franchise_info.phone}
                   </p>
                   <p className="text-gray-600">
-                    <strong>Email:</strong><br />
+                    <strong>{t('propertyDetail.email')}:</strong><br />
                     {property.franchise_info.email}
                   </p>
                   <button
                     onClick={() => setShowContactForm(!showContactForm)}
                     className="w-full bg-red-600 text-white py-3 rounded hover:bg-red-700 transition font-semibold"
                   >
-                    İletişime Geç
+                    {t('propertyDetail.contact')}
                   </button>
                 </div>
 
@@ -196,13 +198,13 @@ const PropertyDetail = () => {
                   <div className="mt-6 pt-6 border-t">
                     {formSuccess ? (
                       <div className="bg-green-100 text-green-700 p-3 rounded">
-                        Mesajınız gönderildi!
+                        {t('propertyDetail.messageSent')}
                       </div>
                     ) : (
                       <form onSubmit={handleContactSubmit} className="space-y-3">
                         <input
                           type="text"
-                          placeholder="Adınız"
+                          placeholder={t('propertyDetail.yourName')}
                           className="w-full px-3 py-2 border rounded"
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -210,7 +212,7 @@ const PropertyDetail = () => {
                         />
                         <input
                           type="email"
-                          placeholder="Email"
+                          placeholder={t('propertyDetail.email')}
                           className="w-full px-3 py-2 border rounded"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -218,14 +220,14 @@ const PropertyDetail = () => {
                         />
                         <input
                           type="tel"
-                          placeholder="Telefon"
+                          placeholder={t('propertyDetail.phone')}
                           className="w-full px-3 py-2 border rounded"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           required
                         />
                         <textarea
-                          placeholder="Mesajınız"
+                          placeholder={t('propertyDetail.yourMessage')}
                           className="w-full px-3 py-2 border rounded"
                           rows="3"
                           value={formData.message}
@@ -236,7 +238,7 @@ const PropertyDetail = () => {
                           type="submit"
                           className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900 transition"
                         >
-                          Gönder
+                          {t('propertyDetail.send')}
                         </button>
                       </form>
                     )}

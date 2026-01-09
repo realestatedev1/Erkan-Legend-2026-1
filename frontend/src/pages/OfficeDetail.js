@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { franchiseAPI, propertyAPI } from '../lib/api';
 
 const OfficeDetail = () => {
   const { id } = useParams();
+  const { t } = useTranslation();
   const [franchise, setFranchise] = useState(null);
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,11 +30,11 @@ const OfficeDetail = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="text-xl">Yükleniyor...</div></div>;
+    return <div className="min-h-screen flex items-center justify-center"><div className="text-xl">{t('officeDetail.loading')}</div></div>;
   }
 
   if (!franchise) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="text-xl">Ofis bulunamadı</div></div>;
+    return <div className="min-h-screen flex items-center justify-center"><div className="text-xl">{t('officeDetail.notFound')}</div></div>;
   }
 
   return (
@@ -42,28 +44,28 @@ const OfficeDetail = () => {
           <h1 className="text-4xl font-bold text-gray-800 mb-6">{franchise.office_name}</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-bold text-lg mb-3">Ofis Bilgileri</h3>
+              <h3 className="font-bold text-lg mb-3">{t('officeDetail.officeInfo')}</h3>
               <div className="space-y-2 text-gray-700">
-                <p><strong>Adres:</strong> {franchise.address}, {franchise.district}, {franchise.city}</p>
-                <p><strong>Telefon:</strong> {franchise.phone}</p>
-                <p><strong>Email:</strong> {franchise.email}</p>
-                <p><strong>Yetkili:</strong> {franchise.manager_name}</p>
+                <p><strong>{t('officeDetail.address')}:</strong> {franchise.address}, {franchise.district}, {franchise.city}</p>
+                <p><strong>{t('officeDetail.phone')}:</strong> {franchise.phone}</p>
+                <p><strong>{t('officeDetail.email')}:</strong> {franchise.email}</p>
+                <p><strong>{t('officeDetail.manager')}:</strong> {franchise.manager_name}</p>
               </div>
             </div>
             {franchise.property_count !== undefined && (
               <div>
-                <h3 className="font-bold text-lg mb-3">İstatistikler</h3>
+                <h3 className="font-bold text-lg mb-3">{t('officeDetail.stats')}</h3>
                 <p className="text-3xl font-bold text-red-600">{franchise.property_count}</p>
-                <p className="text-gray-600">Aktif İlan</p>
+                <p className="text-gray-600">{t('officeDetail.activeListings')}</p>
               </div>
             )}
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Bu Ofisin İlanları</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('officeDetail.officeProperties')}</h2>
         {properties.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg">
-            <p className="text-xl text-gray-600">Henüz ilan bulunmuyor</p>
+            <p className="text-xl text-gray-600">{t('officeDetail.noProperties')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -73,7 +75,7 @@ const OfficeDetail = () => {
                   {property.images?.[0] ? (
                     <img src={`${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`} alt={property.title} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500">Fotoğraf Yok</div>
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">{t('officeDetail.noPhoto')}</div>
                   )}
                 </div>
                 <div className="p-4">
@@ -81,7 +83,7 @@ const OfficeDetail = () => {
                   <p className="text-sm text-gray-600 mb-2">{property.city}, {property.district}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-xl font-bold text-red-600">{property.price.toLocaleString('tr-TR')} {property.currency}</span>
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">{property.property_type === 'sale' ? 'Satılık' : 'Kiralık'}</span>
+                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">{property.property_type === 'sale' ? t('properties.sale') : t('properties.rent')}</span>
                   </div>
                 </div>
               </Link>

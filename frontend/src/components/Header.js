@@ -9,6 +9,8 @@ import LanguageSwitcher from './LanguageSwitcher';
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { favoritesCount } = useFavorites();
+  const { compareCount } = useCompare();
   const navigate = useNavigate();
   const { t } = useTranslation();
 

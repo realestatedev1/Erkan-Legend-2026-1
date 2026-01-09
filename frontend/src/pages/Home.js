@@ -15,6 +15,7 @@ const Home = () => {
     neighborhood: '',
   });
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Dinamik lokasyon listeleri - 81 il ile başla
   const [cities, setCities] = useState([

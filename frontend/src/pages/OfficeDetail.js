@@ -69,11 +69,15 @@ const OfficeDetail = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {properties.map((property) => (
+            {properties.map((property) => {
+              const imageUrl = property.images?.[0] 
+                ? (property.images[0].startsWith('http') ? property.images[0] : `${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`)
+                : null;
+              return (
               <Link key={property.id} to={`/properties/${property.id}`} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
                 <div className="h-48 bg-gray-300">
-                  {property.images?.[0] ? (
-                    <img src={`${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`} alt={property.title} className="w-full h-full object-cover" />
+                  {imageUrl ? (
+                    <img src={imageUrl} alt={property.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-500">{t('officeDetail.noPhoto')}</div>
                   )}

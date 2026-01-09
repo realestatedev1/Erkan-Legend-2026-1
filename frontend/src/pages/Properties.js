@@ -716,3 +716,10 @@ const Properties = () => {
               </div>
             )}
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Properties;

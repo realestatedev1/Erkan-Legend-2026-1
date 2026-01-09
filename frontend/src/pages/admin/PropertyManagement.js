@@ -10,6 +10,7 @@ const PropertyManagement = () => {
   const [editingProperty, setEditingProperty] = useState(null);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [activeTab, setActiveTab] = useState('basic'); // basic, details, features, images
+  const [statusFilter, setStatusFilter] = useState('active'); // 'active', 'inactive', 'all'
   
   // Lokasyon state'leri
   const [cities] = useState([

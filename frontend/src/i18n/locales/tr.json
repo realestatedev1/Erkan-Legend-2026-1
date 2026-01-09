@@ -151,7 +151,10 @@
     "noResultsDesc": "Arama kriterlerinize uygun ilan bulunamadı.",
     "clearFilters": "Filtreleri temizle",
     "featured": "Vitrin",
-    "loading": "Yükleniyor..."
+    "loading": "Yükleniyor...",
+    "gridView": "Liste",
+    "mapView": "Harita",
+    "propertiesOnMap": "ilan haritada gösterildi"
   },
   "propertyDetail": {
     "home": "Ana Sayfa",

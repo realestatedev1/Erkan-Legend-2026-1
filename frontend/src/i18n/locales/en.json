@@ -200,7 +200,8 @@
     "loading": "Loading...",
     "gridView": "List",
     "mapView": "Map",
-    "propertiesOnMap": "properties shown on map"
+    "propertiesOnMap": "properties shown on map",
+    "shareWhatsApp": "Share on WhatsApp"
   },
   "propertyDetail": {
     "home": "Home",

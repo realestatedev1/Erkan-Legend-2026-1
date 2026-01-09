@@ -470,6 +470,60 @@ async def update_property(
     return {"message": "Property updated successfully"}
 
 
+@api_router.patch("/properties/{property_id}/deactivate")
+async def deactivate_property(
+    property_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Deactivate property (move to archive)"""
+    existing_property = await db.properties.find_one({"id": property_id}, {"_id": 0})
+    
+    if not existing_property:
+        raise HTTPException(status_code=404, detail="Property not found")
+    
+    # Check permissions
+    if current_user["role"] == "franchise_admin":
+        if existing_property["franchise_id"] != current_user.get("franchise_id"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only deactivate your franchise's properties"
+            )
+    
+    await db.properties.update_one(
+        {"id": property_id},
+        {"$set": {"active": False, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Property deactivated successfully"}
+
+
+@api_router.patch("/properties/{property_id}/activate")
+async def activate_property(
+    property_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Activate property (publish again)"""
+    existing_property = await db.properties.find_one({"id": property_id}, {"_id": 0})
+    
+    if not existing_property:
+        raise HTTPException(status_code=404, detail="Property not found")
+    
+    # Check permissions
+    if current_user["role"] == "franchise_admin":
+        if existing_property["franchise_id"] != current_user.get("franchise_id"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only activate your franchise's properties"
+            )
+    
+    await db.properties.update_one(
+        {"id": property_id},
+        {"$set": {"active": True, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Property activated successfully"}
+
+
 @api_router.delete("/properties/{property_id}")
 async def delete_property(
     property_id: str,

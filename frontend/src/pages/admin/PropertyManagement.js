@@ -571,6 +571,23 @@ const PropertyManagement = () => {
                       />
                     </div>
 
+                    {/* Konum Seçici - Harita */}
+                    <div className="md:col-span-2">
+                      <LocationPicker
+                        latitude={formData.latitude}
+                        longitude={formData.longitude}
+                        city={formData.city}
+                        onLocationChange={(lat, lng) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            latitude: lat,
+                            longitude: lng
+                          }));
+                        }}
+                        height="300px"
+                      />
+                    </div>
+
                     {/* Açıklama */}
                     <div className="md:col-span-2">
                       <label className="block text-sm font-semibold mb-2">İlan Açıklaması *</label>

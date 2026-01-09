@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
 from typing import Optional
+import os
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-# JWT Configuration
-SECRET_KEY = "legend-cities-secret-key-2025-change-in-production"
+# JWT Configuration - Read from environment variable
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "legend-cities-secret-key-2025-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 hours
 

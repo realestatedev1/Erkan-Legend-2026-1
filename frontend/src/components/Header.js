@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
+import { useCompare } from '../context/CompareContext';
 import LanguageSwitcher from './LanguageSwitcher';
 
 const Header = () => {

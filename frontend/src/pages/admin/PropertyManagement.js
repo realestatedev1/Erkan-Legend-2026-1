@@ -507,11 +507,11 @@ const PropertyManagement = () => {
                       <label className="block text-sm font-semibold mb-2">Fiyat *</label>
                       <div className="flex">
                         <input 
-                          type="number" 
-                          placeholder="Fiyat" 
+                          type="text" 
+                          placeholder="1.000.000" 
                           className="flex-1 px-4 py-3 border rounded-l-lg focus:ring-2 focus:ring-red-600" 
-                          value={formData.price} 
-                          onChange={(e) => handleChange('price', e.target.value)} 
+                          value={formatPriceDisplay(formData.price)} 
+                          onChange={(e) => handlePriceChange('price', e.target.value)} 
                           required 
                         />
                         <select 

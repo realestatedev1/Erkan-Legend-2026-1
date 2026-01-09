@@ -172,6 +172,12 @@ const PropertyDetail = () => {
                   </div>
                 </div>
               )}
+
+              {/* Property Location Map */}
+              <div className="border-t pt-6 mt-6">
+                <h3 className="font-bold text-xl mb-3">{t('propertyDetail.location', 'Konum')}</h3>
+                <SinglePropertyMap property={property} height="350px" />
+              </div>
             </div>
           </div>
 

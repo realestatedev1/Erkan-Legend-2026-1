@@ -699,7 +699,7 @@ async def seed_initial_data():
             "district": "Beşiktaş",
             "phone": "+90 212 324 0 444",
             "email": "etiler@legendcities.com.tr",
-            "manager_name": "Ahmet Yılmaz",
+            "manager_name": "Erkan Çankaya",
             "latitude": 41.0766,
             "longitude": 29.0185
         },

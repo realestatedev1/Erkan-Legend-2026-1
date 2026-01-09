@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { propertyAPI, locationAPI } from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
+import LocationPicker from '../../components/LocationPicker';
 
 const PropertyManagement = () => {
   const { user } = useAuth();

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -37,6 +37,17 @@ const LocationMarker = ({ position, setPosition }) => {
   ) : null;
 };
 
+// Component to change map view
+const ChangeMapView = ({ center, zoom }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.setView(center, zoom);
+    }
+  }, [center, zoom, map]);
+  return null;
+};
+
 // City coordinates for centering map
 const cityCoordinates = {
   'İstanbul': { lat: 41.0082, lng: 28.9784 },
@@ -61,10 +72,102 @@ const cityCoordinates = {
   'default': { lat: 39.0, lng: 35.0 } // Turkey center
 };
 
+// İstanbul ilçe koordinatları
+const districtCoordinates = {
+  'İstanbul': {
+    'Adalar': { lat: 40.8761, lng: 29.0911 },
+    'Arnavutköy': { lat: 41.1848, lng: 28.7394 },
+    'Ataşehir': { lat: 40.9923, lng: 29.1244 },
+    'Avcılar': { lat: 40.9792, lng: 28.7217 },
+    'Bağcılar': { lat: 41.0386, lng: 28.8572 },
+    'Bahçelievler': { lat: 41.0022, lng: 28.8594 },
+    'Bakırköy': { lat: 40.9800, lng: 28.8700 },
+    'Başakşehir': { lat: 41.0936, lng: 28.8028 },
+    'Bayrampaşa': { lat: 41.0469, lng: 28.9039 },
+    'Beşiktaş': { lat: 41.0422, lng: 29.0083 },
+    'Beykoz': { lat: 41.1322, lng: 29.1017 },
+    'Beylikdüzü': { lat: 41.0000, lng: 28.6400 },
+    'Beyoğlu': { lat: 41.0370, lng: 28.9770 },
+    'Büyükçekmece': { lat: 41.0200, lng: 28.5850 },
+    'Çatalca': { lat: 41.1433, lng: 28.4617 },
+    'Çekmeköy': { lat: 41.0353, lng: 29.1819 },
+    'Esenler': { lat: 41.0436, lng: 28.8764 },
+    'Esenyurt': { lat: 41.0333, lng: 28.6833 },
+    'Eyüpsultan': { lat: 41.0478, lng: 28.9344 },
+    'Fatih': { lat: 41.0186, lng: 28.9497 },
+    'Gaziosmanpaşa': { lat: 41.0639, lng: 28.9128 },
+    'Güngören': { lat: 41.0194, lng: 28.8764 },
+    'Kadıköy': { lat: 40.9927, lng: 29.0277 },
+    'Kağıthane': { lat: 41.0819, lng: 28.9764 },
+    'Kartal': { lat: 40.8900, lng: 29.1900 },
+    'Küçükçekmece': { lat: 41.0000, lng: 28.7667 },
+    'Maltepe': { lat: 40.9333, lng: 29.1333 },
+    'Pendik': { lat: 40.8761, lng: 29.2333 },
+    'Sancaktepe': { lat: 41.0022, lng: 29.2350 },
+    'Sarıyer': { lat: 41.1667, lng: 29.0500 },
+    'Silivri': { lat: 41.0731, lng: 28.2464 },
+    'Sultanbeyli': { lat: 40.9667, lng: 29.2667 },
+    'Sultangazi': { lat: 41.1069, lng: 28.8672 },
+    'Şile': { lat: 41.1761, lng: 29.6131 },
+    'Şişli': { lat: 41.0600, lng: 28.9870 },
+    'Tuzla': { lat: 40.8167, lng: 29.3000 },
+    'Ümraniye': { lat: 41.0167, lng: 29.1167 },
+    'Üsküdar': { lat: 41.0236, lng: 29.0153 },
+    'Zeytinburnu': { lat: 41.0053, lng: 28.9036 },
+  },
+  'Ankara': {
+    'Çankaya': { lat: 39.9000, lng: 32.8600 },
+    'Keçiören': { lat: 39.9833, lng: 32.8667 },
+    'Mamak': { lat: 39.9333, lng: 32.9333 },
+    'Yenimahalle': { lat: 39.9667, lng: 32.8000 },
+    'Etimesgut': { lat: 39.9500, lng: 32.6667 },
+    'Sincan': { lat: 39.9667, lng: 32.5833 },
+    'Altındağ': { lat: 39.9500, lng: 32.8667 },
+    'Pursaklar': { lat: 40.0333, lng: 32.9000 },
+    'Gölbaşı': { lat: 39.7833, lng: 32.8000 },
+    'Polatlı': { lat: 39.5833, lng: 32.1500 },
+  },
+  'İzmir': {
+    'Konak': { lat: 38.4189, lng: 27.1287 },
+    'Karşıyaka': { lat: 38.4561, lng: 27.1119 },
+    'Bornova': { lat: 38.4687, lng: 27.2157 },
+    'Buca': { lat: 38.3833, lng: 27.1667 },
+    'Çiğli': { lat: 38.5000, lng: 27.0667 },
+    'Gaziemir': { lat: 38.3167, lng: 27.1333 },
+    'Bayraklı': { lat: 38.4667, lng: 27.1667 },
+    'Karabağlar': { lat: 38.3833, lng: 27.1167 },
+    'Balçova': { lat: 38.3833, lng: 27.0500 },
+    'Narlıdere': { lat: 38.4000, lng: 27.0167 },
+  },
+  'Bursa': {
+    'Nilüfer': { lat: 40.2128, lng: 28.9436 },
+    'Osmangazi': { lat: 40.1833, lng: 29.0500 },
+    'Yıldırım': { lat: 40.2000, lng: 29.1000 },
+    'Mudanya': { lat: 40.3833, lng: 28.8833 },
+    'Gemlik': { lat: 40.4333, lng: 29.1667 },
+    'İnegöl': { lat: 40.0833, lng: 29.5167 },
+    'Gürsu': { lat: 40.2333, lng: 29.1167 },
+    'Kestel': { lat: 40.2000, lng: 29.2167 },
+  },
+  'Antalya': {
+    'Muratpaşa': { lat: 36.8841, lng: 30.7056 },
+    'Konyaaltı': { lat: 36.8693, lng: 30.6378 },
+    'Kepez': { lat: 36.9500, lng: 30.7167 },
+    'Döşemealtı': { lat: 37.0167, lng: 30.5833 },
+    'Aksu': { lat: 36.9333, lng: 30.8500 },
+    'Alanya': { lat: 36.5500, lng: 32.0000 },
+    'Manavgat': { lat: 36.7833, lng: 31.4333 },
+    'Serik': { lat: 36.9167, lng: 31.1000 },
+    'Kaş': { lat: 36.2000, lng: 29.6500 },
+    'Kemer': { lat: 36.6000, lng: 30.5667 },
+  }
+};
+
 const LocationPicker = ({ 
   latitude, 
   longitude, 
   city,
+  district,
   onLocationChange,
   height = '300px'
 }) => {
@@ -74,32 +177,30 @@ const LocationPicker = ({
       : null
   );
 
-  // Get map center based on city or current position
-  const getMapCenter = useCallback(() => {
-    if (position) {
-      return [position.lat, position.lng];
-    }
-    if (city && cityCoordinates[city]) {
-      return [cityCoordinates[city].lat, cityCoordinates[city].lng];
-    }
-    return [cityCoordinates.default.lat, cityCoordinates.default.lng];
-  }, [position, city]);
+  const [mapCenter, setMapCenter] = useState([39.0, 35.0]); // Turkey center
+  const [mapZoom, setMapZoom] = useState(6);
 
-  const [mapCenter, setMapCenter] = useState(getMapCenter());
-  const [mapKey, setMapKey] = useState(0);
-
-  // Update map center when city changes
+  // Update map center when city or district changes
   useEffect(() => {
-    if (!position && city && cityCoordinates[city]) {
+    if (district && city && districtCoordinates[city] && districtCoordinates[city][district]) {
+      const coords = districtCoordinates[city][district];
+      setMapCenter([coords.lat, coords.lng]);
+      setMapZoom(13);
+    } else if (city && cityCoordinates[city]) {
       setMapCenter([cityCoordinates[city].lat, cityCoordinates[city].lng]);
-      setMapKey(prev => prev + 1); // Force map re-render
+      setMapZoom(11);
+    } else {
+      setMapCenter([39.0, 35.0]);
+      setMapZoom(6);
     }
-  }, [city, position]);
+  }, [city, district]);
 
   // Update position when props change
   useEffect(() => {
     if (latitude && longitude) {
       setPosition({ lat: latitude, lng: longitude });
+      setMapCenter([latitude, longitude]);
+      setMapZoom(15);
     }
   }, [latitude, longitude]);
 
@@ -108,7 +209,7 @@ const LocationPicker = ({
     if (position && onLocationChange) {
       onLocationChange(position.lat, position.lng);
     }
-  }, [position, onLocationChange]);
+  }, [position]);
 
   const handleClearLocation = () => {
     setPosition(null);
@@ -136,9 +237,8 @@ const LocationPicker = ({
       
       <div className="rounded-lg overflow-hidden border-2 border-gray-200" style={{ height }}>
         <MapContainer
-          key={mapKey}
           center={mapCenter}
-          zoom={position ? 15 : city ? 11 : 6}
+          zoom={mapZoom}
           style={{ height: '100%', width: '100%' }}
           scrollWheelZoom={true}
         >
@@ -146,6 +246,7 @@ const LocationPicker = ({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <ChangeMapView center={mapCenter} zoom={mapZoom} />
           <LocationMarker position={position} setPosition={setPosition} />
         </MapContainer>
       </div>
@@ -159,7 +260,7 @@ const LocationPicker = ({
       
       {!position && (
         <p className="text-sm text-gray-500 italic">
-          İlanın konumunu belirlemek için haritaya tıklayın
+          💡 Şehir ve ilçe seçtiğinizde harita otomatik olarak o bölgeye odaklanacaktır
         </p>
       )}
     </div>

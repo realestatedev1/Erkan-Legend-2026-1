@@ -714,12 +714,56 @@ async def get_admin_stats(current_user: dict = Depends(get_current_user)):
         career_applications = await db.career_applications.count_documents({"read": False})
         franchise_applications = await db.franchise_applications.count_documents({"read": False})
         
+        # Property type distribution
+        sale_count = await db.properties.count_documents({"property_type": "sale", "active": True})
+        rent_count = await db.properties.count_documents({"property_type": "rent", "active": True})
+        
+        # Category distribution
+        residential_count = await db.properties.count_documents({"category": "residential", "active": True})
+        commercial_count = await db.properties.count_documents({"category": "commercial", "active": True})
+        land_count = await db.properties.count_documents({"category": "land", "active": True})
+        
+        # Top viewed properties
+        top_viewed = await db.properties.find(
+            {"active": True},
+            {"_id": 0, "id": 1, "title": 1, "view_count": 1, "city": 1, "district": 1}
+        ).sort("view_count", -1).limit(5).to_list(5)
+        
+        # Total views
+        pipeline = [
+            {"$match": {"active": True}},
+            {"$group": {"_id": None, "total_views": {"$sum": {"$ifNull": ["$view_count", 0]}}}}
+        ]
+        total_views_result = await db.properties.aggregate(pipeline).to_list(1)
+        total_views = total_views_result[0]["total_views"] if total_views_result else 0
+        
+        # City distribution
+        city_pipeline = [
+            {"$match": {"active": True}},
+            {"$group": {"_id": "$city", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 5}
+        ]
+        city_distribution = await db.properties.aggregate(city_pipeline).to_list(5)
+        
         return {
             "total_properties": total_properties,
             "total_franchises": total_franchises,
             "unread_messages": unread_messages,
             "career_applications": career_applications,
             "franchise_applications": franchise_applications,
+            "total_views": total_views,
+            "property_type_distribution": {
+                "sale": sale_count,
+                "rent": rent_count
+            },
+            "category_distribution": {
+                "residential": residential_count,
+                "commercial": commercial_count,
+                "land": land_count
+            },
+            "top_viewed_properties": top_viewed,
+            "city_distribution": [{"city": c["_id"], "count": c["count"]} for c in city_distribution],
             "role": "super_admin"
         }
 

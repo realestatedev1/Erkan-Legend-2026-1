@@ -305,22 +305,16 @@ const Properties = () => {
                 {/* Price Range */}
                 <div>
                   <label className="block text-sm font-semibold mb-2">{t('properties.priceRange')} (₺)</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      placeholder={t('properties.min')}
-                      className="w-full px-3 py-2 border rounded"
-                      value={filters.min_price}
-                      onChange={(e) => handleFilterChange('min_price', e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      placeholder={t('properties.max')}
-                      className="w-full px-3 py-2 border rounded"
-                      value={filters.max_price}
-                      onChange={(e) => handleFilterChange('max_price', e.target.value)}
-                    />
-                  </div>
+                  <PriceRangeSlider
+                    min={0}
+                    max={50000000}
+                    minValue={filters.min_price ? parseInt(filters.min_price) : 0}
+                    maxValue={filters.max_price ? parseInt(filters.max_price) : 50000000}
+                    onChange={({ min, max }) => {
+                      handleFilterChange('min_price', min > 0 ? min.toString() : '');
+                      handleFilterChange('max_price', max < 50000000 ? max.toString() : '');
+                    }}
+                  />
                 </div>
               </div>
 

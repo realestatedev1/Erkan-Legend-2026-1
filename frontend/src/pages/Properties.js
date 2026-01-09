@@ -3,6 +3,9 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { propertyAPI, locationAPI } from '../lib/api';
 import { MultiPropertyMap } from '../components/PropertyMap';
+import { useFavorites } from '../context/FavoritesContext';
+import { useCompare } from '../context/CompareContext';
+import PriceRangeSlider from '../components/PriceRangeSlider';
 
 const Properties = () => {
   const { t } = useTranslation();
@@ -14,6 +17,8 @@ const Properties = () => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'map'
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { toggleCompare, isInCompare, canAddMore } = useCompare();
   
   const [filters, setFilters] = useState({
     property_type: searchParams.get('property_type') || '',

@@ -559,7 +559,7 @@ async def upload_property_image(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
-    """Upload property image"""
+    """Upload property image (max 30 images per property)"""
     # Check if property exists and user has permission
     existing_property = await db.properties.find_one({"id": property_id}, {"_id": 0})
     
@@ -572,6 +572,14 @@ async def upload_property_image(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You can only upload images for your franchise's properties"
             )
+    
+    # Check image limit (max 30)
+    current_images = existing_property.get("images", [])
+    if len(current_images) >= 30:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Maximum 30 images allowed per property. Please remove some images first."
+        )
     
     # Save file
     file_extension = file.filename.split(".")[-1]
@@ -588,7 +596,7 @@ async def upload_property_image(
         {"$push": {"images": image_url}}
     )
     
-    return {"message": "Image uploaded successfully", "image_url": image_url}
+    return {"message": "Image uploaded successfully", "image_url": image_url, "total_images": len(current_images) + 1}
 
 
 # ============ CONTACT MESSAGE ENDPOINTS ============

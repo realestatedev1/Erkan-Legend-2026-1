@@ -172,7 +172,7 @@ const PropertyPDF = ({ property }) => {
         property.features.forEach((feature, index) => {
           const col = index % featuresPerRow;
           const row = Math.floor(index / featuresPerRow);
-          doc.text(`* ${feature}`, 20 + (col * featureWidth), yPos + (row * 5));
+          doc.text(`* ${normalizeTurkish(feature)}`, 20 + (col * featureWidth), yPos + (row * 5));
         });
         
         yPos += Math.ceil(property.features.length / featuresPerRow) * 5 + 8;
@@ -187,7 +187,7 @@ const PropertyPDF = ({ property }) => {
 
         doc.setFontSize(9);
         doc.setTextColor(60, 60, 60);
-        const descLines = doc.splitTextToSize(property.description, pageWidth - 40);
+        const descLines = doc.splitTextToSize(normalizeTurkish(property.description), pageWidth - 40);
         doc.text(descLines.slice(0, 8), 20, yPos);
         yPos += Math.min(descLines.length, 8) * 4 + 8;
       }

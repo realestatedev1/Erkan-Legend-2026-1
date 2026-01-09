@@ -139,7 +139,7 @@ const PropertyPDF = ({ property }) => {
       if (property.floor) details.push(`Kat: ${property.floor}`);
       if (property.total_floors) details.push(`Bina Kat: ${property.total_floors}`);
       if (property.age !== undefined && property.age !== null) details.push(`Bina Yasi: ${property.age === 0 ? 'Sifir' : property.age}`);
-      if (property.heating) details.push(`Isitma: ${property.heating}`);
+      if (property.heating) details.push(`Isitma: ${normalizeTurkish(property.heating)}`);
       if (property.bathrooms) details.push(`Banyo: ${property.bathrooms}`);
 
       const midPoint = Math.ceil(details.length / 2);
@@ -147,11 +147,11 @@ const PropertyPDF = ({ property }) => {
       const rightCol = details.slice(midPoint);
 
       leftCol.forEach((detail, index) => {
-        doc.text(detail, 30, yPos + (index * 6));
+        doc.text(normalizeTurkish(detail), 30, yPos + (index * 6));
       });
 
       rightCol.forEach((detail, index) => {
-        doc.text(detail, pageWidth / 2 + 10, yPos + (index * 6));
+        doc.text(normalizeTurkish(detail), pageWidth / 2 + 10, yPos + (index * 6));
       });
 
       yPos += Math.max(leftCol.length, rightCol.length) * 6 + 12;

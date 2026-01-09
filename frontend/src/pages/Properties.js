@@ -10,6 +10,7 @@ const Properties = () => {
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   const [filters, setFilters] = useState({
     property_type: searchParams.get('property_type') || '',

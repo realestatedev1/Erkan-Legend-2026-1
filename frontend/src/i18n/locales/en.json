@@ -1,0 +1,268 @@
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "offices": "Our Offices",
+    "services": "Services",
+    "about": "About Us",
+    "franchise": "Franchise",
+    "career": "Career",
+    "contact": "Contact",
+    "login": "Login",
+    "logout": "Logout",
+    "adminPanel": "Admin Panel"
+  },
+  "home": {
+    "heroTitle": "Legend Cities",
+    "heroSubtitle": "Live Your Own Legend in Legendary Cities",
+    "heroDesc": "Trusted real estate service since 1962",
+    "search": {
+      "sale": "For Sale",
+      "rent": "For Rent",
+      "allCategories": "All Categories",
+      "residential": "Residential",
+      "commercial": "Commercial",
+      "land": "Land",
+      "tourism": "Tourism",
+      "selectCity": "Select City",
+      "district": "District",
+      "searchBtn": "Search"
+    },
+    "stats": {
+      "activeListings": "Active Listings",
+      "happyClients": "Happy Clients",
+      "yearsExperience": "Years Experience"
+    },
+    "featuredProperties": {
+      "title": "Featured Properties",
+      "subtitle": "Browse our selected real estate",
+      "noPhoto": "No Photo",
+      "viewAll": "View All Properties"
+    },
+    "services": {
+      "title": "Our Services",
+      "subtitle": "Comprehensive real estate solutions",
+      "residential": "Residential Sales & Rentals",
+      "residentialDesc": "We help you find your dream home",
+      "commercial": "Commercial Space",
+      "commercialDesc": "Ideal locations for your business",
+      "land": "Land & Plots",
+      "landDesc": "Investment opportunities",
+      "consulting": "Consulting",
+      "consultingDesc": "Professional support from our expert team",
+      "management": "Property Management",
+      "managementDesc": "Professional management of your properties",
+      "valuation": "Valuation",
+      "valuationDesc": "Reliable valuation reports",
+      "moreInfo": "More Information"
+    },
+    "franchise": {
+      "title": "Become a Franchisee",
+      "subtitle": "Join the Legend Cities family and write your success story",
+      "apply": "Apply Now"
+    }
+  },
+  "properties": {
+    "title": "Property Listings",
+    "filters": {
+      "title": "Filters",
+      "propertyType": "Property Type",
+      "all": "All",
+      "sale": "For Sale",
+      "rent": "For Rent",
+      "category": "Category",
+      "allCategories": "All Categories",
+      "residential": "Residential",
+      "commercial": "Commercial",
+      "land": "Land",
+      "tourism": "Tourism",
+      "city": "City",
+      "allCities": "All Cities",
+      "district": "District",
+      "allDistricts": "All Districts",
+      "priceRange": "Price Range",
+      "minPrice": "Min Price",
+      "maxPrice": "Max Price",
+      "rooms": "Rooms",
+      "allRooms": "All",
+      "clearFilters": "Clear Filters"
+    },
+    "noResults": "No properties found matching your criteria.",
+    "loading": "Loading properties...",
+    "showing": "Showing",
+    "of": "of",
+    "results": "results"
+  },
+  "propertyDetail": {
+    "forSale": "For Sale",
+    "forRent": "For Rent",
+    "description": "Description",
+    "features": "Features",
+    "location": "Location",
+    "contactForm": {
+      "title": "I'm Interested in This Property",
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Your Message",
+      "send": "Send Message",
+      "success": "Your message has been sent!"
+    },
+    "details": {
+      "rooms": "Rooms",
+      "area": "Area",
+      "floor": "Floor",
+      "age": "Building Age",
+      "heating": "Heating",
+      "furnished": "Furnished",
+      "parking": "Parking",
+      "balcony": "Balcony",
+      "elevator": "Elevator",
+      "pool": "Pool",
+      "gym": "Gym",
+      "garden": "Garden",
+      "security": "Security",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "offices": {
+    "title": "Our Offices",
+    "subtitle": "Our service network across Turkey",
+    "viewDetails": "Details",
+    "properties": "Properties"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Legend Cities - Trusted real estate consulting since 1962",
+    "story": {
+      "title": "Our Story",
+      "content": "Founded in 1962, Legend Cities is one of Turkey's most established and trusted real estate consulting firms. With over sixty years of experience, we work to provide our clients with the highest quality service."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "content": "To meet our clients' real estate needs in the best way possible, and to be a pioneer in the industry with reliable and transparent service."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "content": "To be the leading brand offering international standard real estate services in every corner of Turkey."
+    },
+    "values": {
+      "title": "Our Values",
+      "trust": "Trust",
+      "trustDesc": "We build trust-based relationships with our clients",
+      "quality": "Quality",
+      "qualityDesc": "We always provide the highest quality service",
+      "innovation": "Innovation",
+      "innovationDesc": "We closely follow developments in the industry",
+      "customer": "Customer Focus",
+      "customerDesc": "Customer satisfaction is our priority"
+    }
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Comprehensive real estate solutions"
+  },
+  "franchise": {
+    "title": "Franchise Application",
+    "subtitle": "Join the Legend Cities family",
+    "benefits": {
+      "title": "Franchise Benefits",
+      "brand": "Strong Brand",
+      "brandDesc": "Over 60 years of experience and trusted brand image",
+      "support": "Full Support",
+      "supportDesc": "Training, marketing and operational support",
+      "network": "Wide Network",
+      "networkDesc": "Strong franchise network across Turkey"
+    },
+    "form": {
+      "title": "Application Form",
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "city": "City You Want to Apply For",
+      "experience": "Your Real Estate Experience",
+      "investment": "Your Investment Budget",
+      "message": "Your Message",
+      "submit": "Submit Application",
+      "success": "Your application has been received! We will contact you soon."
+    }
+  },
+  "career": {
+    "title": "Career",
+    "subtitle": "Join the Legend Cities team",
+    "benefits": {
+      "title": "Why Legend Cities?",
+      "growth": "Career Growth",
+      "growthDesc": "Continuous training and advancement opportunities",
+      "team": "Dynamic Team",
+      "teamDesc": "Young and energetic work environment",
+      "income": "Competitive Income",
+      "incomeDesc": "Performance-based reward system"
+    },
+    "form": {
+      "title": "Application Form",
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "position": "Position You Want to Apply For",
+      "experience": "Your Experience",
+      "education": "Your Education",
+      "coverLetter": "Cover Letter",
+      "submit": "Submit Application",
+      "success": "Your application has been received! We will contact you after review."
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Get in touch with us",
+    "info": {
+      "title": "Contact Information",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "form": {
+      "title": "Send a Message",
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Your Message",
+      "send": "Send",
+      "success": "Your message has been sent! We will get back to you soon."
+    }
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "loginBtn": "Login",
+    "error": "Invalid username or password"
+  },
+  "footer": {
+    "slogan": "Live your own legend in legendary cities",
+    "description": "Trusted real estate service since 1962.",
+    "quickLinks": "Quick Links",
+    "services": "Our Services",
+    "contact": "Contact",
+    "residential": "Residential Sales & Rentals",
+    "commercial": "Commercial Sales & Rentals",
+    "land": "Land & Plot Sales",
+    "consulting": "Real Estate Consulting",
+    "management": "Property Management",
+    "valuation": "Valuation",
+    "allRights": "All rights reserved."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "currency": "TRY"
+  }
+}

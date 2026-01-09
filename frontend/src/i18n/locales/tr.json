@@ -1,0 +1,268 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "properties": "İlanlar",
+    "offices": "Ofislerimiz",
+    "services": "Hizmetler",
+    "about": "Hakkımızda",
+    "franchise": "Franchise",
+    "career": "Kariyer",
+    "contact": "İletişim",
+    "login": "Giriş",
+    "logout": "Çıkış",
+    "adminPanel": "Admin Panel"
+  },
+  "home": {
+    "heroTitle": "Legend Cities",
+    "heroSubtitle": "Live Your Own Legend in Legendary Cities",
+    "heroDesc": "1962'den beri gayrimenkul sektöründe güvenilir hizmet",
+    "search": {
+      "sale": "Satılık",
+      "rent": "Kiralık",
+      "allCategories": "Tüm Kategoriler",
+      "residential": "Konut",
+      "commercial": "Ticari",
+      "land": "Arsa",
+      "tourism": "Turizm",
+      "selectCity": "Şehir Seçin",
+      "district": "İlçe",
+      "searchBtn": "Ara"
+    },
+    "stats": {
+      "activeListings": "Aktif İlan",
+      "happyClients": "Mutlu Müşteri",
+      "yearsExperience": "Yıllık Deneyim"
+    },
+    "featuredProperties": {
+      "title": "Vitrin İlanlar",
+      "subtitle": "Seçilmiş gayrimenkullerimize göz atın",
+      "noPhoto": "Fotoğraf Yok",
+      "viewAll": "Tüm İlanları Gör"
+    },
+    "services": {
+      "title": "Hizmetlerimiz",
+      "subtitle": "Kapsamlı gayrimenkul çözümleri",
+      "residential": "Konut Satış & Kiralama",
+      "residentialDesc": "Hayalinizdeki evi bulmanızda yanınızdayız",
+      "commercial": "Ticari Alan",
+      "commercialDesc": "İşletmeniz için ideal lokasyonlar",
+      "land": "Arazi & Arsa",
+      "landDesc": "Yatırım fırsatları",
+      "consulting": "Danışmanlık",
+      "consultingDesc": "Uzman ekibimizle profesyonel destek",
+      "management": "Yönetim Hizmetleri",
+      "managementDesc": "Gayrimenkullerinizin profesyonel yönetimi",
+      "valuation": "Değerleme",
+      "valuationDesc": "Güvenilir değerleme raporları",
+      "moreInfo": "Detaylı Bilgi"
+    },
+    "franchise": {
+      "title": "Franchise Olun",
+      "subtitle": "Legend Cities ailesine katılın ve başarı hikayenizi yazın",
+      "apply": "Başvuru Yap"
+    }
+  },
+  "properties": {
+    "title": "Emlak İlanları",
+    "filters": {
+      "title": "Filtreler",
+      "propertyType": "İlan Türü",
+      "all": "Tümü",
+      "sale": "Satılık",
+      "rent": "Kiralık",
+      "category": "Kategori",
+      "allCategories": "Tüm Kategoriler",
+      "residential": "Konut",
+      "commercial": "Ticari",
+      "land": "Arsa",
+      "tourism": "Turizm",
+      "city": "Şehir",
+      "allCities": "Tüm Şehirler",
+      "district": "İlçe",
+      "allDistricts": "Tüm İlçeler",
+      "priceRange": "Fiyat Aralığı",
+      "minPrice": "Min Fiyat",
+      "maxPrice": "Max Fiyat",
+      "rooms": "Oda Sayısı",
+      "allRooms": "Tümü",
+      "clearFilters": "Filtreleri Temizle"
+    },
+    "noResults": "Arama kriterlerinize uygun ilan bulunamadı.",
+    "loading": "İlanlar yükleniyor...",
+    "showing": "Gösterilen",
+    "of": "/",
+    "results": "sonuç"
+  },
+  "propertyDetail": {
+    "forSale": "Satılık",
+    "forRent": "Kiralık",
+    "description": "Açıklama",
+    "features": "Özellikler",
+    "location": "Konum",
+    "contactForm": {
+      "title": "İlanla İlgileniyorum",
+      "name": "Ad Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "message": "Mesajınız",
+      "send": "Mesaj Gönder",
+      "success": "Mesajınız gönderildi!"
+    },
+    "details": {
+      "rooms": "Oda Sayısı",
+      "area": "Alan",
+      "floor": "Kat",
+      "age": "Bina Yaşı",
+      "heating": "Isıtma",
+      "furnished": "Eşyalı",
+      "parking": "Otopark",
+      "balcony": "Balkon",
+      "elevator": "Asansör",
+      "pool": "Havuz",
+      "gym": "Spor Salonu",
+      "garden": "Bahçe",
+      "security": "Güvenlik",
+      "yes": "Var",
+      "no": "Yok"
+    }
+  },
+  "offices": {
+    "title": "Ofislerimiz",
+    "subtitle": "Türkiye genelinde hizmet ağımız",
+    "viewDetails": "Detaylar",
+    "properties": "İlan"
+  },
+  "about": {
+    "title": "Hakkımızda",
+    "subtitle": "Legend Cities - 1962'den beri güvenilir gayrimenkul danışmanlığı",
+    "story": {
+      "title": "Hikayemiz",
+      "content": "1962 yılında kurulan Legend Cities, Türkiye'nin en köklü ve güvenilir gayrimenkul danışmanlık firmalarından biridir. Altmış yılı aşkın deneyimimizle, müşterilerimize en kaliteli hizmeti sunmak için çalışıyoruz."
+    },
+    "mission": {
+      "title": "Misyonumuz",
+      "content": "Müşterilerimizin gayrimenkul ihtiyaçlarını en iyi şekilde karşılamak, güvenilir ve şeffaf hizmet anlayışıyla sektörde öncü olmak."
+    },
+    "vision": {
+      "title": "Vizyonumuz",
+      "content": "Türkiye'nin her köşesinde, uluslararası standartlarda gayrimenkul hizmeti sunan lider marka olmak."
+    },
+    "values": {
+      "title": "Değerlerimiz",
+      "trust": "Güven",
+      "trustDesc": "Müşterilerimizle güvene dayalı ilişkiler kuruyoruz",
+      "quality": "Kalite",
+      "qualityDesc": "Her zaman en yüksek kalitede hizmet sunuyoruz",
+      "innovation": "Yenilikçilik",
+      "innovationDesc": "Sektördeki gelişmeleri yakından takip ediyoruz",
+      "customer": "Müşteri Odaklılık",
+      "customerDesc": "Müşteri memnuniyeti önceliğimizdir"
+    }
+  },
+  "services": {
+    "title": "Hizmetlerimiz",
+    "subtitle": "Kapsamlı gayrimenkul çözümleri"
+  },
+  "franchise": {
+    "title": "Franchise Başvurusu",
+    "subtitle": "Legend Cities ailesine katılın",
+    "benefits": {
+      "title": "Franchise Avantajları",
+      "brand": "Güçlü Marka",
+      "brandDesc": "60 yılı aşkın tecrübe ve güvenilir marka imajı",
+      "support": "Tam Destek",
+      "supportDesc": "Eğitim, pazarlama ve operasyonel destek",
+      "network": "Geniş Ağ",
+      "networkDesc": "Türkiye genelinde güçlü franchise ağı"
+    },
+    "form": {
+      "title": "Başvuru Formu",
+      "name": "Ad Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "city": "Başvurmak İstediğiniz Şehir",
+      "experience": "Gayrimenkul Deneyiminiz",
+      "investment": "Yatırım Bütçeniz",
+      "message": "Mesajınız",
+      "submit": "Başvuru Yap",
+      "success": "Başvurunuz alındı! En kısa sürede sizinle iletişime geçeceğiz."
+    }
+  },
+  "career": {
+    "title": "Kariyer",
+    "subtitle": "Legend Cities ekibine katılın",
+    "benefits": {
+      "title": "Neden Legend Cities?",
+      "growth": "Kariyer Gelişimi",
+      "growthDesc": "Sürekli eğitim ve ilerleme fırsatları",
+      "team": "Dinamik Ekip",
+      "teamDesc": "Genç ve enerjik çalışma ortamı",
+      "income": "Rekabetçi Gelir",
+      "incomeDesc": "Performansa dayalı ödül sistemi"
+    },
+    "form": {
+      "title": "Başvuru Formu",
+      "name": "Ad Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "position": "Başvurmak İstediğiniz Pozisyon",
+      "experience": "Deneyiminiz",
+      "education": "Eğitim Durumunuz",
+      "coverLetter": "Ön Yazı",
+      "submit": "Başvuru Yap",
+      "success": "Başvurunuz alındı! İncelendikten sonra sizinle iletişime geçeceğiz."
+    }
+  },
+  "contact": {
+    "title": "İletişim",
+    "subtitle": "Bizimle iletişime geçin",
+    "info": {
+      "title": "İletişim Bilgileri",
+      "address": "Adres",
+      "phone": "Telefon",
+      "email": "E-posta"
+    },
+    "form": {
+      "title": "Mesaj Gönderin",
+      "name": "Ad Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "message": "Mesajınız",
+      "send": "Gönder",
+      "success": "Mesajınız gönderildi! En kısa sürede dönüş yapacağız."
+    }
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "loginBtn": "Giriş Yap",
+    "error": "Kullanıcı adı veya şifre hatalı"
+  },
+  "footer": {
+    "slogan": "Live your own legend in legendary cities",
+    "description": "1962'den beri gayrimenkul sektöründe güvenilir hizmet.",
+    "quickLinks": "Hızlı Linkler",
+    "services": "Hizmetlerimiz",
+    "contact": "İletişim",
+    "residential": "Konut Satış & Kiralama",
+    "commercial": "Ticari Alan Satış & Kiralama",
+    "land": "Arazi & Arsa Satışı",
+    "consulting": "Gayrimenkul Danışmanlığı",
+    "management": "Yönetim Hizmetleri",
+    "valuation": "Değerleme",
+    "allRights": "Tüm hakları saklıdır."
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "close": "Kapat",
+    "yes": "Evet",
+    "no": "Hayır",
+    "currency": "TL"
+  }
+}

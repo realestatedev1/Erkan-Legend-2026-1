@@ -65,6 +65,8 @@ const AppRoutes = () => {
           <Route path="/career" element={<Career />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/compare" element={<Compare />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

@@ -153,15 +153,15 @@ const Home = () => {
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold mb-4 animate-fadeInUp text-white drop-shadow-2xl" data-testid="hero-title">
-                Legend Cities
+                {t('home.heroTitle')}
               </h1>
               
               <p className="text-2xl md:text-3xl mb-2 text-white font-light italic animate-fadeInUp animation-delay-200 drop-shadow-lg" data-testid="hero-subtitle">
-                Live Your Own Legend in Legendary Cities
+                {t('home.heroSubtitle')}
               </p>
               
               <p className="text-lg md:text-xl mb-8 text-gray-200 animate-fadeInUp animation-delay-400 drop-shadow-md">
-                1962'den beri gayrimenkul sektöründe güvenilir hizmet
+                {t('home.heroDesc')}
               </p>
 
             {/* Search Bar */}
@@ -173,8 +173,8 @@ const Home = () => {
                   onChange={(e) => setSearchParams({ ...searchParams, property_type: e.target.value })}
                   data-testid="search-property-type"
                 >
-                  <option value="sale">Satılık</option>
-                  <option value="rent">Kiralık</option>
+                  <option value="sale">{t('home.search.sale')}</option>
+                  <option value="rent">{t('home.search.rent')}</option>
                 </select>
 
                 <select
@@ -183,11 +183,11 @@ const Home = () => {
                   onChange={(e) => setSearchParams({ ...searchParams, category: e.target.value })}
                   data-testid="search-category"
                 >
-                  <option value="">Tüm Kategoriler</option>
-                  <option value="residential">Konut</option>
-                  <option value="commercial">Ticari</option>
-                  <option value="land">Arsa</option>
-                  <option value="tourism">Turizm</option>
+                  <option value="">{t('home.search.allCategories')}</option>
+                  <option value="residential">{t('home.search.residential')}</option>
+                  <option value="commercial">{t('home.search.commercial')}</option>
+                  <option value="land">{t('home.search.land')}</option>
+                  <option value="tourism">{t('home.search.tourism')}</option>
                 </select>
 
                 <select
@@ -196,7 +196,7 @@ const Home = () => {
                   onChange={(e) => setSearchParams({ ...searchParams, city: e.target.value, district: '', neighborhood: '' })}
                   data-testid="search-city"
                 >
-                  <option value="">Şehir Seçin</option>
+                  <option value="">{t('home.search.selectCity')}</option>
                   {cities.map(city => (
                     <option key={city} value={city}>{city}</option>
                   ))}
@@ -209,7 +209,7 @@ const Home = () => {
                   disabled={!searchParams.city}
                   data-testid="search-district"
                 >
-                  <option value="">İlçe</option>
+                  <option value="">{t('home.search.district')}</option>
                   {districts.map(district => (
                     <option key={district} value={district}>{district}</option>
                   ))}
@@ -220,7 +220,7 @@ const Home = () => {
                   className="bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700 transition font-semibold"
                   data-testid="search-button"
                 >
-                  Ara
+                  {t('home.search.searchBtn')}
                 </button>
               </div>
             </form>

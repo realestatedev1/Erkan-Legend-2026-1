@@ -253,6 +253,16 @@ const PropertyDetail = () => {
                 <h3 className="font-bold text-xl mb-3">{t('propertyDetail.location', 'Konum')}</h3>
                 <SinglePropertyMap property={property} height="350px" />
               </div>
+
+              {/* Mortgage Calculator - Only for Sale properties */}
+              {property.property_type === 'sale' && property.credit_eligible !== false && (
+                <div className="mt-6">
+                  <MortgageCalculator 
+                    propertyPrice={property.price} 
+                    currency={property.currency} 
+                  />
+                </div>
+              )}
             </div>
           </div>
 

@@ -10,54 +10,93 @@ const PropertyPDF = ({ property }) => {
     return new Intl.NumberFormat('tr-TR').format(price);
   };
 
+  const loadImage = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  };
+
   const generatePDF = async () => {
     setLoading(true);
     
     try {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
-      let yPos = 20;
+      let yPos = 15;
 
       // Title
       doc.setFontSize(20);
-      doc.setTextColor(220, 38, 38); // Red color
+      doc.setTextColor(220, 38, 38);
       doc.text('LEGEND CITIES', pageWidth / 2, yPos, { align: 'center' });
-      yPos += 10;
+      yPos += 8;
 
-      doc.setFontSize(12);
+      doc.setFontSize(10);
       doc.setTextColor(100, 100, 100);
       doc.text('Emlak Ilani Detaylari', pageWidth / 2, yPos, { align: 'center' });
-      yPos += 15;
+      yPos += 10;
+
+      // Try to add property image
+      if (property.images && property.images.length > 0) {
+        try {
+          let imageUrl = property.images[0];
+          if (!imageUrl.startsWith('http')) {
+            imageUrl = `${window.location.origin}${imageUrl}`;
+          }
+          
+          const imageData = await loadImage(imageUrl);
+          if (imageData) {
+            // Add image centered, max width 170, maintain aspect ratio
+            const imgWidth = 170;
+            const imgHeight = 95;
+            const xPos = (pageWidth - imgWidth) / 2;
+            doc.addImage(imageData, 'JPEG', xPos, yPos, imgWidth, imgHeight);
+            yPos += imgHeight + 10;
+          }
+        } catch (imgError) {
+          console.log('Could not load image:', imgError);
+        }
+      }
 
       // Horizontal line
       doc.setDrawColor(220, 38, 38);
       doc.setLineWidth(0.5);
       doc.line(20, yPos, pageWidth - 20, yPos);
-      yPos += 15;
+      yPos += 10;
 
       // Property Title
-      doc.setFontSize(16);
+      doc.setFontSize(14);
       doc.setTextColor(0, 0, 0);
       const titleLines = doc.splitTextToSize(property.title, pageWidth - 40);
       doc.text(titleLines, 20, yPos);
-      yPos += titleLines.length * 8 + 5;
+      yPos += titleLines.length * 6 + 5;
 
       // Price
-      doc.setFontSize(18);
+      doc.setFontSize(16);
       doc.setTextColor(220, 38, 38);
       doc.text(`${formatPrice(property.price)} ${property.currency}`, 20, yPos);
-      yPos += 8;
+      yPos += 6;
 
       doc.setFontSize(10);
       doc.setTextColor(100, 100, 100);
       doc.text(property.property_type === 'sale' ? 'Satilik' : 'Kiralik', 20, yPos);
-      yPos += 15;
+      yPos += 10;
 
       // Location
-      doc.setFontSize(12);
+      doc.setFontSize(11);
       doc.setTextColor(0, 0, 0);
       doc.text('Konum', 20, yPos);
-      yPos += 6;
+      yPos += 5;
       doc.setFontSize(10);
       doc.setTextColor(60, 60, 60);
       doc.text(`${property.city}, ${property.district}${property.neighborhood ? ', ' + property.neighborhood : ''}`, 20, yPos);
@@ -65,14 +104,14 @@ const PropertyPDF = ({ property }) => {
         yPos += 5;
         doc.text(property.address, 20, yPos);
       }
-      yPos += 15;
+      yPos += 10;
 
       // Property Details Box
       doc.setFillColor(245, 245, 245);
-      doc.roundedRect(20, yPos, pageWidth - 40, 40, 3, 3, 'F');
-      yPos += 10;
+      doc.roundedRect(20, yPos, pageWidth - 40, 35, 3, 3, 'F');
+      yPos += 8;
 
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       doc.setTextColor(0, 0, 0);
       
       const details = [];
@@ -85,29 +124,28 @@ const PropertyPDF = ({ property }) => {
       if (property.heating) details.push(`Isitma: ${property.heating}`);
       if (property.bathrooms) details.push(`Banyo: ${property.bathrooms}`);
 
-      // Split details into two columns
       const midPoint = Math.ceil(details.length / 2);
       const leftCol = details.slice(0, midPoint);
       const rightCol = details.slice(midPoint);
 
       leftCol.forEach((detail, index) => {
-        doc.text(detail, 30, yPos + (index * 7));
+        doc.text(detail, 30, yPos + (index * 6));
       });
 
       rightCol.forEach((detail, index) => {
-        doc.text(detail, pageWidth / 2 + 10, yPos + (index * 7));
+        doc.text(detail, pageWidth / 2 + 10, yPos + (index * 6));
       });
 
-      yPos += Math.max(leftCol.length, rightCol.length) * 7 + 15;
+      yPos += Math.max(leftCol.length, rightCol.length) * 6 + 12;
 
       // Features
       if (property.features && property.features.length > 0) {
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setTextColor(0, 0, 0);
         doc.text('Ozellikler', 20, yPos);
-        yPos += 8;
+        yPos += 6;
 
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.setTextColor(60, 60, 60);
         
         const featuresPerRow = 3;
@@ -116,24 +154,24 @@ const PropertyPDF = ({ property }) => {
         property.features.forEach((feature, index) => {
           const col = index % featuresPerRow;
           const row = Math.floor(index / featuresPerRow);
-          doc.text(`• ${feature}`, 20 + (col * featureWidth), yPos + (row * 6));
+          doc.text(`* ${feature}`, 20 + (col * featureWidth), yPos + (row * 5));
         });
         
-        yPos += Math.ceil(property.features.length / featuresPerRow) * 6 + 10;
+        yPos += Math.ceil(property.features.length / featuresPerRow) * 5 + 8;
       }
 
       // Description
       if (property.description) {
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setTextColor(0, 0, 0);
         doc.text('Aciklama', 20, yPos);
-        yPos += 8;
+        yPos += 6;
 
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.setTextColor(60, 60, 60);
         const descLines = doc.splitTextToSize(property.description, pageWidth - 40);
-        doc.text(descLines.slice(0, 10), 20, yPos); // Limit to 10 lines
-        yPos += Math.min(descLines.length, 10) * 5 + 10;
+        doc.text(descLines.slice(0, 8), 20, yPos);
+        yPos += Math.min(descLines.length, 8) * 4 + 8;
       }
 
       // Additional Info
@@ -147,20 +185,20 @@ const PropertyPDF = ({ property }) => {
       if (property.pool) additionalInfo.push('Havuz');
 
       if (additionalInfo.length > 0) {
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.setTextColor(34, 139, 34);
-        doc.text(additionalInfo.join(' • '), 20, yPos);
-        yPos += 15;
+        doc.text(additionalInfo.join(' | '), 20, yPos);
+        yPos += 10;
       }
 
       // Footer
       doc.setDrawColor(220, 38, 38);
-      doc.line(20, doc.internal.pageSize.getHeight() - 25, pageWidth - 20, doc.internal.pageSize.getHeight() - 25);
+      doc.line(20, doc.internal.pageSize.getHeight() - 20, pageWidth - 20, doc.internal.pageSize.getHeight() - 20);
       
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setTextColor(100, 100, 100);
-      doc.text(`Legend Cities - ${new Date().toLocaleDateString('tr-TR')}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 18, { align: 'center' });
-      doc.text(`${window.location.origin}/properties/${property.id}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 12, { align: 'center' });
+      doc.text(`Legend Cities - ${new Date().toLocaleDateString('tr-TR')}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 14, { align: 'center' });
+      doc.text(`${window.location.origin}/properties/${property.id}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 9, { align: 'center' });
 
       // Save PDF
       doc.save(`ilan-${property.id}.pdf`);

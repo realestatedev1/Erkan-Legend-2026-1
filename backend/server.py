@@ -348,15 +348,22 @@ async def get_properties(
     properties = await db.properties.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
     total = await db.properties.count_documents(query)
     
-    # Add franchise info to each property
-    for prop in properties:
-        franchise = await db.franchises.find_one({"id": prop["franchise_id"]}, {"_id": 0})
-        if franchise:
-            prop["franchise_info"] = {
-                "office_name": franchise["office_name"],
-                "phone": franchise["phone"],
-                "email": franchise["email"]
-            }
+    # Batch fetch franchise info to avoid N+1 queries
+    if properties:
+        franchise_ids = list(set(prop["franchise_id"] for prop in properties))
+        franchises_cursor = db.franchises.find({"id": {"$in": franchise_ids}}, {"_id": 0})
+        franchises_list = await franchises_cursor.to_list(len(franchise_ids))
+        franchises_dict = {f["id"]: f for f in franchises_list}
+        
+        # Add franchise info to each property
+        for prop in properties:
+            franchise = franchises_dict.get(prop["franchise_id"])
+            if franchise:
+                prop["franchise_info"] = {
+                    "office_name": franchise["office_name"],
+                    "phone": franchise["phone"],
+                    "email": franchise["email"]
+                }
     
     return {
         "properties": properties,

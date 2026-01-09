@@ -5,6 +5,9 @@ import { propertyAPI, contactAPI } from '../lib/api';
 import { SinglePropertyMap } from '../components/PropertyMap';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCompare } from '../context/CompareContext';
+import MortgageCalculator from '../components/MortgageCalculator';
+import PropertyQRCode from '../components/PropertyQRCode';
+import PropertyPDF from '../components/PropertyPDF';
 
 const PropertyDetail = () => {
   const { id } = useParams();

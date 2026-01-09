@@ -84,9 +84,13 @@ const AppRoutes = () => {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <FavoritesProvider>
+        <CompareProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </CompareProvider>
+      </FavoritesProvider>
     </AuthProvider>
   );
 }

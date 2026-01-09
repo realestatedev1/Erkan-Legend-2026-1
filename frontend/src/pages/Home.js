@@ -251,15 +251,15 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div data-testid="stat-properties">
               <div className="text-5xl font-bold text-red-600 mb-2">{stats.properties}+</div>
-              <div className="text-gray-600 text-lg">Aktif İlan</div>
+              <div className="text-gray-600 text-lg">{t('home.stats.activeListings')}</div>
             </div>
             <div data-testid="stat-clients">
               <div className="text-5xl font-bold text-red-600 mb-2">{stats.clients}+</div>
-              <div className="text-gray-600 text-lg">Mutlu Müşteri</div>
+              <div className="text-gray-600 text-lg">{t('home.stats.happyClients')}</div>
             </div>
             <div data-testid="stat-experience">
               <div className="text-5xl font-bold text-red-600 mb-2">{stats.experience}</div>
-              <div className="text-gray-600 text-lg">Yıllık Deneyim</div>
+              <div className="text-gray-600 text-lg">{t('home.stats.yearsExperience')}</div>
             </div>
           </div>
         </div>

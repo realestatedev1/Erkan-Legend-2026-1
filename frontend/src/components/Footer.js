@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-gray-900 text-white py-12">
       <div className="container mx-auto px-4">
@@ -14,40 +17,40 @@ const Footer = () => {
               className="h-16 w-auto mb-4"
             />
             <p className="text-gray-400 text-sm">
-              Live your own legend in legendary cities
+              {t('footer.slogan')}
             </p>
             <p className="text-gray-400 text-sm mt-4">
-              1962'den beri gayrimenkul sektöründe güvenilir hizmet.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-bold mb-4">Hızlı Linkler</h4>
+            <h4 className="font-bold mb-4">{t('footer.quickLinks')}</h4>
             <ul className="space-y-2">
-              <li><Link to="/properties" className="text-gray-400 hover:text-red-600 transition">İlanlar</Link></li>
-              <li><Link to="/offices" className="text-gray-400 hover:text-red-600 transition">Ofislerimiz</Link></li>
-              <li><Link to="/services" className="text-gray-400 hover:text-red-600 transition">Hizmetler</Link></li>
-              <li><Link to="/about" className="text-gray-400 hover:text-red-600 transition">Hakkımızda</Link></li>
+              <li><Link to="/properties" className="text-gray-400 hover:text-red-600 transition">{t('nav.properties')}</Link></li>
+              <li><Link to="/offices" className="text-gray-400 hover:text-red-600 transition">{t('nav.offices')}</Link></li>
+              <li><Link to="/services" className="text-gray-400 hover:text-red-600 transition">{t('nav.services')}</Link></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-red-600 transition">{t('nav.about')}</Link></li>
             </ul>
           </div>
 
           {/* Services */}
           <div>
-            <h4 className="font-bold mb-4">Hizmetlerimiz</h4>
+            <h4 className="font-bold mb-4">{t('footer.services')}</h4>
             <ul className="space-y-2">
-              <li className="text-gray-400 text-sm">Konut Satış & Kiralama</li>
-              <li className="text-gray-400 text-sm">Ticari Alan Satış & Kiralama</li>
-              <li className="text-gray-400 text-sm">Arazi & Arsa Satışı</li>
-              <li className="text-gray-400 text-sm">Gayrimenkul Danışmanlığı</li>
-              <li className="text-gray-400 text-sm">Yönetim Hizmetleri</li>
-              <li className="text-gray-400 text-sm">Değerleme</li>
+              <li className="text-gray-400 text-sm">{t('footer.residential')}</li>
+              <li className="text-gray-400 text-sm">{t('footer.commercial')}</li>
+              <li className="text-gray-400 text-sm">{t('footer.land')}</li>
+              <li className="text-gray-400 text-sm">{t('footer.consulting')}</li>
+              <li className="text-gray-400 text-sm">{t('footer.management')}</li>
+              <li className="text-gray-400 text-sm">{t('footer.valuation')}</li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold mb-4">İletişim</h4>
+            <h4 className="font-bold mb-4">{t('footer.contact')}</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>Nisbetiye Mahallesi</li>
               <li>Nisbetiye Caddesi No:28/16</li>
@@ -65,7 +68,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} Legend Cities. Tüm hakları saklıdır.</p>
+          <p>&copy; {new Date().getFullYear()} Legend Cities. {t('footer.allRights')}</p>
         </div>
       </div>
     </footer>

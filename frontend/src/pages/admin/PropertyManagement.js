@@ -237,6 +237,8 @@ const PropertyManagement = () => {
       age: property.age || '',
       total_floors: property.total_floors || '',
       bathrooms: property.bathrooms || '',
+      latitude: property.latitude || null,
+      longitude: property.longitude || null,
     });
     setShowForm(true);
     setActiveTab('basic');

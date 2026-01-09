@@ -63,6 +63,12 @@ const PropertyDetail = () => {
     ? property.images 
     : ['/placeholder.jpg'];
 
+  // Helper function to get image URL
+  const getImageUrl = (img) => {
+    if (!img) return '/placeholder.jpg';
+    return img.startsWith('http') ? img : `${process.env.REACT_APP_BACKEND_URL}${img}`;
+  };
+
   return (
     <div className="min-h-screen py-8 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -83,7 +89,7 @@ const PropertyDetail = () => {
               <div className="h-96 bg-gray-300">
                 {images[currentImage] && (
                   <img
-                    src={`${process.env.REACT_APP_BACKEND_URL}${images[currentImage]}`}
+                    src={getImageUrl(images[currentImage])}
                     alt={property.title}
                     className="w-full h-full object-cover"
                   />
@@ -94,7 +100,7 @@ const PropertyDetail = () => {
                   {images.map((img, index) => (
                     <img
                       key={index}
-                      src={`${process.env.REACT_APP_BACKEND_URL}${img}`}
+                      src={getImageUrl(img)}
                       alt={`${property.title} ${index + 1}`}
                       className={`w-20 h-20 object-cover cursor-pointer rounded ${
                         currentImage === index ? 'ring-2 ring-red-600' : ''

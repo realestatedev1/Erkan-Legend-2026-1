@@ -132,7 +132,9 @@ const PropertyManagement = () => {
 
   const loadProperties = async () => {
     try {
-      const params = user?.role === 'franchise_admin' ? { franchise_id: user.franchise_id } : {};
+      const params = user?.role === 'franchise_admin' 
+        ? { franchise_id: user.franchise_id, include_inactive: true } 
+        : { include_inactive: true };
       const response = await propertyAPI.getAll({ ...params, limit: 100 });
       setProperties(response.data.properties || []);
     } catch (error) {

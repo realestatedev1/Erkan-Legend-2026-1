@@ -95,7 +95,7 @@ const PropertyPDF = ({ property }) => {
       // Property Title
       doc.setFontSize(14);
       doc.setTextColor(0, 0, 0);
-      const titleLines = doc.splitTextToSize(property.title, pageWidth - 40);
+      const titleLines = doc.splitTextToSize(normalizeTurkish(property.title), pageWidth - 40);
       doc.text(titleLines, 20, yPos);
       yPos += titleLines.length * 6 + 5;
 
@@ -117,10 +117,10 @@ const PropertyPDF = ({ property }) => {
       yPos += 5;
       doc.setFontSize(10);
       doc.setTextColor(60, 60, 60);
-      doc.text(`${property.city}, ${property.district}${property.neighborhood ? ', ' + property.neighborhood : ''}`, 20, yPos);
+      doc.text(normalizeTurkish(`${property.city}, ${property.district}${property.neighborhood ? ', ' + property.neighborhood : ''}`), 20, yPos);
       if (property.address) {
         yPos += 5;
-        doc.text(property.address, 20, yPos);
+        doc.text(normalizeTurkish(property.address), 20, yPos);
       }
       yPos += 10;
 

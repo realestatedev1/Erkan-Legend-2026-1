@@ -164,6 +164,11 @@ const Properties = () => {
 
   const activeFilterCount = Object.values(filters).filter(v => v !== '' && v !== null && v !== undefined).length;
 
+  // Handle property click from map
+  const handleMapPropertyClick = (property) => {
+    navigate(`/properties/${property.id}`);
+  };
+
   return (
     <div className="min-h-screen py-4 md:py-8 bg-gray-50">
       <div className="container mx-auto px-4">

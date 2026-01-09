@@ -45,7 +45,7 @@ const Contact = () => {
               <h3 className="font-bold text-xl mb-4 text-gray-800">{t('contact.headOffice')}</h3>
               <div className="space-y-3 text-gray-600">
                 <p><strong>{t('contact.address')}:</strong><br />Nisbetiye Mahallesi Nisbetiye Caddesi No:28/16<br />34340 Etiler, Beşiktaş<br />İstanbul - Türkiye</p>
-                <p><strong>{t('contact.phone')}:</strong> +90 212 324 0 444</p>
+                <p><strong>{t('contact.phone')}:</strong><br />+90 212 324 0 444<br />+90 532 212 51 47</p>
                 <p><strong>{t('contact.email')}:</strong> info@legendcities.com.tr</p>
                 <p><strong>{t('contact.web')}:</strong> www.legendcities.com.tr</p>
                 <p>

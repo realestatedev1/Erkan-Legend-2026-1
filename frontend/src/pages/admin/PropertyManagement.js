@@ -1085,8 +1085,12 @@ const PropertyManagement = () => {
 
         {/* İlan Listesi */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {properties.length === 0 ? (
-            <div className="p-8 text-center text-gray-600">Henüz ilan yok</div>
+          {filteredProperties.length === 0 ? (
+            <div className="p-8 text-center text-gray-600">
+              {statusFilter === 'active' && 'Aktif ilan yok'}
+              {statusFilter === 'inactive' && 'Arşivde ilan yok'}
+              {statusFilter === 'all' && 'Henüz ilan yok'}
+            </div>
           ) : (
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -1101,12 +1105,12 @@ const PropertyManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {properties.map((property) => (
-                  <tr key={property.id} className="border-b hover:bg-gray-50">
+                {filteredProperties.map((property) => (
+                  <tr key={property.id} className={`border-b hover:bg-gray-50 ${property.active === false ? 'bg-gray-100 opacity-75' : ''}`}>
                     <td className="p-4">
                       {property.images && property.images.length > 0 ? (
                         <img 
-                          src={`${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`}
+                          src={property.images[0].startsWith('http') ? property.images[0] : `${process.env.REACT_APP_BACKEND_URL}${property.images[0]}`}
                           alt={property.title}
                           className="w-16 h-16 object-cover rounded"
                         />
@@ -1130,8 +1134,8 @@ const PropertyManagement = () => {
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className={`px-2 py-1 rounded text-xs ${property.active ? 'bg-green-100 text-green-700' : 'bg-gray-100'}`}>
-                        {property.active ? 'Aktif' : 'Pasif'}
+                      <span className={`px-2 py-1 rounded text-xs ${property.active !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                        {property.active !== false ? '✓ Aktif' : '⏸ Arşivde'}
                       </span>
                       {property.featured && (
                         <span className="ml-1 px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-700">
@@ -1140,18 +1144,39 @@ const PropertyManagement = () => {
                       )}
                     </td>
                     <td className="p-4">
-                      <button 
-                        onClick={() => handleEdit(property)} 
-                        className="text-blue-600 hover:text-blue-800 mr-3"
-                      >
-                        Düzenle
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(property.id)} 
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        Sil
-                      </button>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => handleEdit(property)} 
+                            className="text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            ✏️ Düzenle
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(property.id)} 
+                            className="text-red-600 hover:text-red-800 text-sm"
+                          >
+                            🗑️ Sil
+                          </button>
+                        </div>
+                        <div>
+                          {property.active !== false ? (
+                            <button 
+                              onClick={() => handleDeactivate(property.id)} 
+                              className="text-orange-600 hover:text-orange-800 text-sm"
+                            >
+                              ⏸ Pasife Al
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => handleActivate(property.id)} 
+                              className="text-green-600 hover:text-green-800 text-sm"
+                            >
+                              ▶️ Yayınla
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ))}

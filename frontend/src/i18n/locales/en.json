@@ -151,7 +151,10 @@
     "noResultsDesc": "No properties match your search criteria.",
     "clearFilters": "Clear filters",
     "featured": "Featured",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "gridView": "List",
+    "mapView": "Map",
+    "propertiesOnMap": "properties shown on map"
   },
   "propertyDetail": {
     "home": "Home",

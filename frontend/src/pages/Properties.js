@@ -162,13 +162,177 @@ const Properties = () => {
   const activeFilterCount = Object.values(filters).filter(v => v !== '' && v !== null && v !== undefined).length;
 
   return (
-    <div className="min-h-screen py-8 bg-gray-50">
+    <div className="min-h-screen py-4 md:py-8 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">{t('properties.title')}</h1>
+        {/* Header with title and mobile filter button */}
+        <div className="flex items-center justify-between mb-4 md:mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-800">{t('properties.title')}</h1>
+          
+          {/* Mobile Filter Button */}
+          <button
+            onClick={() => setShowMobileFilters(true)}
+            className="lg:hidden flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            {t('properties.filter')}
+            {activeFilterCount > 0 && (
+              <span className="bg-white text-red-600 text-xs px-2 py-0.5 rounded-full">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Filter Overlay */}
+        {showMobileFilters && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            {/* Backdrop */}
+            <div 
+              className="absolute inset-0 bg-black/50"
+              onClick={() => setShowMobileFilters(false)}
+            />
+            
+            {/* Filter Panel */}
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between z-10">
+                <h3 className="font-bold text-xl">{t('properties.filter')}</h3>
+                <button
+                  onClick={() => setShowMobileFilters(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="p-4 space-y-4">
+                {/* Mobile Filter Content - Same as desktop */}
+                {/* Property Type */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2">{t('properties.propertyType')}</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-600"
+                    value={filters.property_type}
+                    onChange={(e) => handleFilterChange('property_type', e.target.value)}
+                  >
+                    <option value="">{t('properties.all')}</option>
+                    <option value="sale">{t('properties.sale')}</option>
+                    <option value="rent">{t('properties.rent')}</option>
+                  </select>
+                </div>
+
+                {/* Category */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2">{t('properties.category')}</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-600"
+                    value={filters.category}
+                    onChange={(e) => handleFilterChange('category', e.target.value)}
+                  >
+                    <option value="">{t('properties.all')}</option>
+                    <option value="residential">{t('properties.residential')}</option>
+                    <option value="commercial">{t('properties.commercial')}</option>
+                    <option value="land">{t('properties.land')}</option>
+                    <option value="tourism">{t('properties.tourism')}</option>
+                  </select>
+                </div>
+
+                {/* City */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2">{t('properties.city')}</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-600"
+                    value={filters.city}
+                    onChange={(e) => handleFilterChange('city', e.target.value)}
+                  >
+                    <option value="">{t('properties.selectCity')}</option>
+                    {cities.map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* District */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2">{t('properties.district')}</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-600"
+                    value={filters.district}
+                    onChange={(e) => handleFilterChange('district', e.target.value)}
+                    disabled={!filters.city || loadingLocations}
+                  >
+                    <option value="">{t('properties.selectDistrict')}</option>
+                    {districts.map(district => (
+                      <option key={district} value={district}>{district}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Rooms */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2">{t('properties.rooms')}</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-600"
+                    value={filters.rooms}
+                    onChange={(e) => handleFilterChange('rooms', e.target.value)}
+                  >
+                    <option value="">{t('properties.all')}</option>
+                    <option value="1+0">{t('properties.studio')} (1+0)</option>
+                    <option value="1+1">1+1</option>
+                    <option value="2+1">2+1</option>
+                    <option value="3+1">3+1</option>
+                    <option value="4+1">4+1</option>
+                    <option value="5+">5+</option>
+                  </select>
+                </div>
+
+                {/* Price Range */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2">{t('properties.priceRange')} (₺)</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="number"
+                      placeholder={t('properties.min')}
+                      className="w-full px-3 py-2 border rounded"
+                      value={filters.min_price}
+                      onChange={(e) => handleFilterChange('min_price', e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder={t('properties.max')}
+                      className="w-full px-3 py-2 border rounded"
+                      value={filters.max_price}
+                      onChange={(e) => handleFilterChange('max_price', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Filter Actions */}
+              <div className="sticky bottom-0 bg-white border-t p-4 space-y-2">
+                <button 
+                  onClick={() => { applyFilters(); setShowMobileFilters(false); }} 
+                  className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold"
+                >
+                  🔍 {t('properties.applyFilters')} ({activeFilterCount})
+                </button>
+                <button 
+                  onClick={() => { clearFilters(); setShowMobileFilters(false); }} 
+                  className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg"
+                >
+                  {t('properties.clearAll')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Filters Sidebar */}
-          <div className="lg:col-span-1">
+          {/* Filters Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block lg:col-span-1">
             <div className="bg-white p-6 rounded-lg shadow-md sticky top-24">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-xl">{t('properties.filter')}</h3>

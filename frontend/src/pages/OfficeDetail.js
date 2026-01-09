@@ -91,7 +91,7 @@ const OfficeDetail = () => {
                   </div>
                 </div>
               </Link>
-            ))}
+            );})}
           </div>
         )}
       </div>

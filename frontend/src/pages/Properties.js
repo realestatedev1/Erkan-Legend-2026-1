@@ -600,12 +600,43 @@ const Properties = () => {
               <p className="text-gray-600">
                 <span className="font-semibold text-gray-800">{total}</span> {t('properties.resultsFound')}
               </p>
-              <select className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600">
-                <option>{t('properties.sortNewest')}</option>
-                <option>{t('properties.sortPriceLow')}</option>
-                <option>{t('properties.sortPriceHigh')}</option>
-                <option>{t('properties.sortArea')}</option>
-              </select>
+              <div className="flex items-center gap-4">
+                {/* View Mode Toggle */}
+                <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition ${
+                      viewMode === 'grid' 
+                        ? 'bg-white text-red-600 shadow-sm' 
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    {t('properties.gridView', 'Liste')}
+                  </button>
+                  <button
+                    onClick={() => setViewMode('map')}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition ${
+                      viewMode === 'map' 
+                        ? 'bg-white text-red-600 shadow-sm' 
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                    {t('properties.mapView', 'Harita')}
+                  </button>
+                </div>
+                <select className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600">
+                  <option>{t('properties.sortNewest')}</option>
+                  <option>{t('properties.sortPriceLow')}</option>
+                  <option>{t('properties.sortPriceHigh')}</option>
+                  <option>{t('properties.sortArea')}</option>
+                </select>
+              </div>
             </div>
 
             {loading ? (
@@ -618,6 +649,20 @@ const Properties = () => {
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('properties.noResults')}</h3>
                 <p className="text-gray-500 mb-4">{t('properties.noResultsDesc')}</p>
                 <button onClick={clearFilters} className="text-red-600 hover:underline">{t('properties.clearFilters')}</button>
+              </div>
+            ) : viewMode === 'map' ? (
+              /* Map View */
+              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                <MultiPropertyMap 
+                  properties={properties} 
+                  height="600px"
+                  onPropertyClick={handleMapPropertyClick}
+                />
+                <div className="p-4 border-t bg-gray-50">
+                  <p className="text-sm text-gray-600">
+                    📍 {properties.filter(p => p.latitude && p.longitude).length} / {properties.length} {t('properties.propertiesOnMap', 'ilan haritada gösterildi')}
+                  </p>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

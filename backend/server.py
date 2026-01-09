@@ -737,7 +737,7 @@ async def seed_initial_data():
     
     # Create franchise admins
     franchise_admins_data = [
-        {"username": "etiler", "name": "Ahmet Yılmaz", "franchise_id": franchise_ids[0]},
+        {"username": "etiler", "name": "Erkan Çankaya", "franchise_id": franchise_ids[0]},
         {"username": "kadikoy", "name": "Ayşe Demir", "franchise_id": franchise_ids[1]},
         {"username": "izmir", "name": "Mehmet Kaya", "franchise_id": franchise_ids[2]}
     ]

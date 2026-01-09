@@ -295,6 +295,22 @@ const PropertyManagement = () => {
     setFormData({ ...formData, [key]: value });
   };
 
+  // Fiyat formatı için yardımcı fonksiyonlar
+  const formatPriceDisplay = (value) => {
+    if (!value && value !== 0) return '';
+    // Sadece rakamları al
+    const numericValue = String(value).replace(/[^\d]/g, '');
+    if (!numericValue) return '';
+    // 1.000.000 formatına çevir
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  const handlePriceChange = (key, value) => {
+    // Sadece rakamları al ve kaydet
+    const numericValue = value.replace(/[^\d]/g, '');
+    setFormData({ ...formData, [key]: numericValue });
+  };
+
   const handleCheckboxChange = (key) => {
     setFormData({ ...formData, [key]: !formData[key] });
   };

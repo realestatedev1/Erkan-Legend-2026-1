@@ -200,7 +200,8 @@
     "loading": "Yükleniyor...",
     "gridView": "Liste",
     "mapView": "Harita",
-    "propertiesOnMap": "ilan haritada gösterildi"
+    "propertiesOnMap": "ilan haritada gösterildi",
+    "shareWhatsApp": "WhatsApp ile Paylaş"
   },
   "propertyDetail": {
     "home": "Ana Sayfa",

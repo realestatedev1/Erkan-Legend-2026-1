@@ -57,6 +57,7 @@ const Footer = () => {
               <li>34340 Etiler, Beşiktaş</li>
               <li>İstanbul - Türkiye</li>
               <li className="mt-4">Tel: +90 212 324 0 444</li>
+              <li>Tel: +90 532 212 51 47</li>
               <li>Email: info@legendcities.com.tr</li>
               <li className="mt-4">
                 <a href="https://www.instagram.com/legendcities" target="_blank" rel="noopener noreferrer" className="hover:text-legend-red transition">

@@ -1010,7 +1010,18 @@ const PropertyManagement = () => {
               {activeTab === 'images' && editingProperty && (
                 <div className="space-y-6">
                   <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-bold text-lg mb-4">📷 İlan Görselleri</h3>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-bold text-lg">📷 İlan Görselleri</h3>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        (formData.images?.length || 0) >= 30 
+                          ? 'bg-red-100 text-red-700' 
+                          : (formData.images?.length || 0) >= 25 
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-green-100 text-green-700'
+                      }`}>
+                        {formData.images?.length || 0} / 30 görsel
+                      </span>
+                    </div>
                     
                     {/* Mevcut Resimler */}
                     {formData.images && formData.images.length > 0 ? (
@@ -1018,7 +1029,7 @@ const PropertyManagement = () => {
                         {formData.images.map((img, index) => (
                           <div key={index} className="relative group">
                             <img 
-                              src={`${process.env.REACT_APP_BACKEND_URL}${img}`}
+                              src={img.startsWith('http') ? img : `${process.env.REACT_APP_BACKEND_URL}${img}`}
                               alt={`Görsel ${index + 1}`}
                               className="w-full h-32 object-cover rounded-lg"
                             />
@@ -1046,14 +1057,25 @@ const PropertyManagement = () => {
                     {/* Yeni Resim Yükle */}
                     <div className="border-t pt-4">
                       <label className="block mb-2 text-sm font-semibold">Yeni Görsel Ekle:</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={(e) => handleImageUpload(e, editingProperty.id)}
-                        disabled={uploadingImages}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-                      />
+                      {(formData.images?.length || 0) >= 30 ? (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                          ⚠️ Maksimum görsel limitine (30) ulaşıldı. Yeni görsel eklemek için önce mevcut görsellerden bazılarını silmelisiniz.
+                        </div>
+                      ) : (
+                        <>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => handleImageUpload(e, editingProperty.id)}
+                            disabled={uploadingImages}
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+                          />
+                          <p className="text-xs text-gray-500 mt-2">
+                            Kalan: {30 - (formData.images?.length || 0)} görsel daha ekleyebilirsiniz
+                          </p>
+                        </>
+                      )}
                       {uploadingImages && (
                         <div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
                           <div className="animate-spin h-4 w-4 border-2 border-red-600 border-t-transparent rounded-full"></div>

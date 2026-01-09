@@ -134,9 +134,11 @@ const PropertyDetail = () => {
                     <div className="text-sm text-gray-600">{t('propertyDetail.rooms')}</div>
                   </div>
                 )}
-                {property.area_sqm && (
+                {(property.area_gross || property.area_net || property.area_sqm) && (
                   <div className="text-center p-3 bg-gray-50 rounded">
-                    <div className="font-bold text-gray-800">{property.area_sqm}m²</div>
+                    <div className="font-bold text-gray-800">
+                      {property.area_gross || property.area_net || property.area_sqm}m²
+                    </div>
                     <div className="text-sm text-gray-600">{t('propertyDetail.area')}</div>
                   </div>
                 )}
@@ -146,7 +148,7 @@ const PropertyDetail = () => {
                     <div className="text-sm text-gray-600">{t('propertyDetail.floor')}</div>
                   </div>
                 )}
-                {property.age !== null && (
+                {property.age !== null && property.age !== undefined && (
                   <div className="text-center p-3 bg-gray-50 rounded">
                     <div className="font-bold text-gray-800">{property.age}</div>
                     <div className="text-sm text-gray-600">{t('propertyDetail.buildingAge')}</div>

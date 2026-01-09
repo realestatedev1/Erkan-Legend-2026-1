@@ -90,21 +90,21 @@ const Header = () => {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
-            <Link to="/" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.home')}</Link>
-            <Link to="/properties" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.properties')}</Link>
-            <Link to="/offices" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.offices')}</Link>
-            <Link to="/services" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.services')}</Link>
-            <Link to="/about" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.about')}</Link>
-            <Link to="/franchise" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.franchise')}</Link>
-            <Link to="/career" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.career')}</Link>
-            <Link to="/contact" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.contact')}</Link>
+            <Link to="/" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.home')}</Link>
+            <Link to="/properties" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.properties')}</Link>
+            <Link to="/offices" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.offices')}</Link>
+            <Link to="/services" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.services')}</Link>
+            <Link to="/about" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.about')}</Link>
+            <Link to="/franchise" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.franchise')}</Link>
+            <Link to="/career" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.career')}</Link>
+            <Link to="/contact" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.contact')}</Link>
             {user ? (
               <>
-                <Link to="/admin" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.adminPanel')}</Link>
+                <Link to="/admin" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.adminPanel')}</Link>
                 <button onClick={handleLogout} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.logout')}</button>
               </>
             ) : (
-              <Link to="/login" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.login')}</Link>
+              <Link to="/login" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.login')}</Link>
             )}
           </div>
         )}

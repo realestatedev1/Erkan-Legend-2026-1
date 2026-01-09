@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
@@ -26,15 +29,18 @@ const Header = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-red-600 transition">Ana Sayfa</Link>
-            <Link to="/properties" className="text-gray-700 hover:text-red-600 transition">İlanlar</Link>
-            <Link to="/offices" className="text-gray-700 hover:text-red-600 transition">Ofislerimiz</Link>
-            <Link to="/services" className="text-gray-700 hover:text-red-600 transition">Hizmetler</Link>
-            <Link to="/about" className="text-gray-700 hover:text-red-600 transition">Hakkımızda</Link>
-            <Link to="/franchise" className="text-gray-700 hover:text-red-600 transition">Franchise</Link>
-            <Link to="/career" className="text-gray-700 hover:text-red-600 transition">Kariyer</Link>
-            <Link to="/contact" className="text-gray-700 hover:text-red-600 transition">İletişim</Link>
+          <div className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-gray-700 hover:text-red-600 transition">{t('nav.home')}</Link>
+            <Link to="/properties" className="text-gray-700 hover:text-red-600 transition">{t('nav.properties')}</Link>
+            <Link to="/offices" className="text-gray-700 hover:text-red-600 transition">{t('nav.offices')}</Link>
+            <Link to="/services" className="text-gray-700 hover:text-red-600 transition">{t('nav.services')}</Link>
+            <Link to="/about" className="text-gray-700 hover:text-red-600 transition">{t('nav.about')}</Link>
+            <Link to="/franchise" className="text-gray-700 hover:text-red-600 transition">{t('nav.franchise')}</Link>
+            <Link to="/career" className="text-gray-700 hover:text-red-600 transition">{t('nav.career')}</Link>
+            <Link to="/contact" className="text-gray-700 hover:text-red-600 transition">{t('nav.contact')}</Link>
+            
+            {/* Language Switcher */}
+            <LanguageSwitcher />
             
             {user ? (
               <>
@@ -42,13 +48,13 @@ const Header = () => {
                   to="/admin" 
                   className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
                 >
-                  Admin Panel
+                  {t('nav.adminPanel')}
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="text-gray-700 hover:text-red-600 transition"
                 >
-                  Çıkış
+                  {t('nav.logout')}
                 </button>
               </>
             ) : (
@@ -56,38 +62,43 @@ const Header = () => {
                 to="/login" 
                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
               >
-                Giriş
+                {t('nav.login')}
               </Link>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-gray-700"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+          <div className="md:hidden flex items-center gap-3">
+            <LanguageSwitcher />
+            <button
+              className="text-gray-700"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
-            <Link to="/" className="block py-2 text-gray-700 hover:text-red-600">Ana Sayfa</Link>
-            <Link to="/properties" className="block py-2 text-gray-700 hover:text-red-600">İlanlar</Link>
-            <Link to="/offices" className="block py-2 text-gray-700 hover:text-red-600">Ofislerimiz</Link>
-            <Link to="/services" className="block py-2 text-gray-700 hover:text-red-600">Hizmetler</Link>
-            <Link to="/about" className="block py-2 text-gray-700 hover:text-red-600">Hakkımızda</Link>
-            <Link to="/franchise" className="block py-2 text-gray-700 hover:text-red-600">Franchise</Link>
-            <Link to="/career" className="block py-2 text-gray-700 hover:text-red-600">Kariyer</Link>
-            <Link to="/contact" className="block py-2 text-gray-700 hover:text-red-600">İletişim</Link>
-            {user && (
+            <Link to="/" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.home')}</Link>
+            <Link to="/properties" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.properties')}</Link>
+            <Link to="/offices" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.offices')}</Link>
+            <Link to="/services" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.services')}</Link>
+            <Link to="/about" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.about')}</Link>
+            <Link to="/franchise" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.franchise')}</Link>
+            <Link to="/career" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.career')}</Link>
+            <Link to="/contact" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.contact')}</Link>
+            {user ? (
               <>
-                <Link to="/admin" className="block py-2 text-gray-700 hover:text-red-600">Admin Panel</Link>
-                <button onClick={handleLogout} className="block py-2 text-gray-700 hover:text-red-600">Çıkış</button>
+                <Link to="/admin" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.adminPanel')}</Link>
+                <button onClick={handleLogout} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.logout')}</button>
               </>
+            ) : (
+              <Link to="/login" className="block py-2 text-gray-700 hover:text-red-600">{t('nav.login')}</Link>
             )}
           </div>
         )}

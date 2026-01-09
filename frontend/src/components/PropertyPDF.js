@@ -198,14 +198,14 @@ const PropertyPDF = ({ property }) => {
       if (property.exchange) additionalInfo.push('Takasa Acik');
       if (property.in_complex) additionalInfo.push('Site Icinde');
       if (property.elevator) additionalInfo.push('Asansor');
-      if (property.parking) additionalInfo.push(`Otopark: ${property.parking}`);
+      if (property.parking) additionalInfo.push(`Otopark: ${normalizeTurkish(property.parking)}`);
       if (property.security) additionalInfo.push('Guvenlik');
       if (property.pool) additionalInfo.push('Havuz');
 
       if (additionalInfo.length > 0) {
         doc.setFontSize(9);
         doc.setTextColor(34, 139, 34);
-        doc.text(additionalInfo.join(' | '), 20, yPos);
+        doc.text(normalizeTurkish(additionalInfo.join(' | ')), 20, yPos);
         yPos += 10;
       }
 

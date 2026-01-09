@@ -251,6 +251,37 @@ const PropertyManagement = () => {
     }
   };
 
+  const handleDeactivate = async (id) => {
+    if (!window.confirm('İlanı pasife almak istediğinize emin misiniz? İlan arşive taşınacak.')) return;
+    try {
+      await propertyAPI.deactivate(id);
+      loadProperties();
+      alert('İlan pasife alındı (arşivlendi)');
+    } catch (error) {
+      console.error('Failed to deactivate property:', error);
+      alert('Pasife alma başarısız: ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
+  const handleActivate = async (id) => {
+    if (!window.confirm('İlanı tekrar yayınlamak istediğinize emin misiniz?')) return;
+    try {
+      await propertyAPI.activate(id);
+      loadProperties();
+      alert('İlan tekrar yayınlandı');
+    } catch (error) {
+      console.error('Failed to activate property:', error);
+      alert('Yayınlama başarısız: ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
+  // Filtrelenmiş ilanlar
+  const filteredProperties = properties.filter(property => {
+    if (statusFilter === 'active') return property.active !== false;
+    if (statusFilter === 'inactive') return property.active === false;
+    return true; // 'all'
+  });
+
   const handleChange = (key, value) => {
     setFormData({ ...formData, [key]: value });
   };

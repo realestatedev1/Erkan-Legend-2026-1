@@ -42,6 +42,8 @@ export const propertyAPI = {
   create: (data) => api.post('/properties', data),
   update: (id, data) => api.put(`/properties/${id}`, data),
   delete: (id) => api.delete(`/properties/${id}`),
+  deactivate: (id) => api.patch(`/properties/${id}/deactivate`),
+  activate: (id) => api.patch(`/properties/${id}/activate`),
   uploadImage: (propertyId, file) => {
     const formData = new FormData();
     formData.append('file', file);

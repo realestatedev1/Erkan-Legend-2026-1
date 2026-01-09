@@ -579,6 +579,7 @@ const PropertyManagement = () => {
                         latitude={formData.latitude}
                         longitude={formData.longitude}
                         city={formData.city}
+                        district={formData.district}
                         onLocationChange={(lat, lng) => {
                           setFormData(prev => ({
                             ...prev,

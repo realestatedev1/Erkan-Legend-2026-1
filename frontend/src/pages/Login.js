@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+  const { t } = useTranslation();
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,7 @@ const Login = () => {
       await login(credentials);
       navigate('/admin');
     } catch (err) {
-      setError('Kullanıcı adı veya şifre hatalı');
+      setError(t('login.error'));
     } finally {
       setLoading(false);
     }
@@ -33,8 +35,8 @@ const Login = () => {
             alt="Legend Cities" 
             className="h-20 w-auto mx-auto mb-4"
           />
-          <h2 className="text-3xl font-bold text-gray-800">Admin Girişi</h2>
-          <p className="text-gray-600 mt-2">Legend Cities Yönetim Paneli</p>
+          <h2 className="text-3xl font-bold text-gray-800">{t('login.title')}</h2>
+          <p className="text-gray-600 mt-2">{t('login.subtitle')}</p>
         </div>
 
         {error && (
@@ -45,7 +47,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Kullanıcı Adı</label>
+            <label className="block text-gray-700 font-semibold mb-2">{t('login.username')}</label>
             <input
               type="text"
               className="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-red-600"
@@ -57,7 +59,7 @@ const Login = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 font-semibold mb-2">Şifre</label>
+            <label className="block text-gray-700 font-semibold mb-2">{t('login.password')}</label>
             <input
               type="password"
               className="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-red-600"
@@ -74,14 +76,14 @@ const Login = () => {
             disabled={loading}
             data-testid="login-submit"
           >
-            {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
+            {loading ? t('login.loggingIn') : t('login.loginBtn')}
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          <p>Demo Kullanıcılar:</p>
-          <p className="mt-2">Super Admin: admin / LegendCities2025!</p>
-          <p>Franchise: etiler / franchise123</p>
+          <p>{t('login.demoUsers')}:</p>
+          <p className="mt-2">{t('login.superAdmin')}: admin / LegendCities2025!</p>
+          <p>{t('login.franchise')}: etiler / franchise123</p>
         </div>
       </div>
     </div>

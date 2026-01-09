@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { propertyAPI, contactAPI } from '../lib/api';
 import { SinglePropertyMap } from '../components/PropertyMap';
+import { useFavorites } from '../context/FavoritesContext';
+import { useCompare } from '../context/CompareContext';
 
 const PropertyDetail = () => {
   const { id } = useParams();
@@ -13,6 +15,8 @@ const PropertyDetail = () => {
   const [showContactForm, setShowContactForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [formSuccess, setFormSuccess] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { toggleCompare, isInCompare, canAddMore } = useCompare();
 
   useEffect(() => {
     loadProperty();

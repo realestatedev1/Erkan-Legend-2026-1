@@ -175,15 +175,29 @@ const PropertyDetail = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-gray-600 mb-4">
+              <div className="flex items-center gap-4 text-gray-600 mb-2">
                 <span>📍 {property.city}, {property.district}</span>
                 {property.neighborhood && <span>• {property.neighborhood}</span>}
               </div>
-              <div className="text-4xl font-bold text-red-600 mb-6">
+              
+              {/* View Count */}
+              <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                <span className="flex items-center gap-1">
+                  👁️ {property.view_count || 0} {t('propertyDetail.views', 'görüntülenme')}
+                </span>
+              </div>
+
+              <div className="text-4xl font-bold text-red-600 mb-4">
                 {property.price.toLocaleString('tr-TR')} {property.currency}
                 <span className="text-lg font-normal text-gray-600 ml-2">
                   ({property.property_type === 'sale' ? t('propertyDetail.forSale') : t('propertyDetail.forRent')})
                 </span>
+              </div>
+
+              {/* Action Buttons Row */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                <PropertyPDF property={property} />
+                <PropertyQRCode propertyId={property.id} propertyTitle={property.title} />
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

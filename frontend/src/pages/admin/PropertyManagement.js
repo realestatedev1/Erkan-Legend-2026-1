@@ -83,7 +83,11 @@ const PropertyManagement = () => {
     // Diğer
     featured: false,
     images: [],
-    features: []
+    features: [],
+    
+    // Konum Koordinatları
+    latitude: null,
+    longitude: null
   };
 
   const [formData, setFormData] = useState(initialFormData);

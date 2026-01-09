@@ -296,7 +296,42 @@ const PropertyManagement = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">İlan Yönetimi</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">İlan Yönetimi</h1>
+            {/* Status Filter Tabs */}
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => setStatusFilter('active')}
+                className={`px-4 py-2 rounded-lg font-medium transition ${
+                  statusFilter === 'active'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                ✓ Aktif İlanlar ({properties.filter(p => p.active !== false).length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('inactive')}
+                className={`px-4 py-2 rounded-lg font-medium transition ${
+                  statusFilter === 'inactive'
+                    ? 'bg-orange-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                ⏸ Arşiv ({properties.filter(p => p.active === false).length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('all')}
+                className={`px-4 py-2 rounded-lg font-medium transition ${
+                  statusFilter === 'all'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                📋 Tümü ({properties.length})
+              </button>
+            </div>
+          </div>
           <button 
             onClick={() => { 
               setShowForm(true); 

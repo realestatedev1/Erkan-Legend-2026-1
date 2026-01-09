@@ -250,11 +250,16 @@ async def get_properties(
     # Genel
     franchise_id: Optional[str] = None,
     featured_only: bool = False,
+    include_inactive: bool = False,
     limit: int = 20,
     skip: int = 0
 ):
     """Get properties with advanced filters (public endpoint)"""
-    query = {"active": True}
+    query = {}
+    
+    # Varsayılan olarak sadece aktif ilanları göster (include_inactive=True ise hepsini göster)
+    if not include_inactive:
+        query["active"] = True
     
     # Temel filtreler
     if property_type:

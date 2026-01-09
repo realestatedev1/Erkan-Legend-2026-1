@@ -12,7 +12,13 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
+    setMobileMenuOpen(false);
     navigate('/');
+  };
+
+  // Mobil menüde link tıklandığında menüyü kapat
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
   };
 
   return (

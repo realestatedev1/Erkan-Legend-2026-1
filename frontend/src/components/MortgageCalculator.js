@@ -70,19 +70,19 @@ const MortgageCalculator = ({ propertyPrice, currency = 'TRY' }) => {
               </label>
               <input
                 type="range"
-                min="10"
-                max="50"
+                min="5"
+                max="95"
                 step="5"
                 value={downPaymentPercent}
                 onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
-                <span>%10</span>
+                <span>%5</span>
                 <span className="font-medium text-blue-600">
                   {formatPrice((propertyPrice * downPaymentPercent) / 100)} {currency}
                 </span>
-                <span>%50</span>
+                <span>%95</span>
               </div>
             </div>
 

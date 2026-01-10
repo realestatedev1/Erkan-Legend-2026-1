@@ -311,3 +311,49 @@ class PriceAlert(BaseModel):
     target_price: float
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+
+# ============ CONSULTANT MODELS ============
+
+class Consultant(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    franchise_id: str  # Bağlı olduğu ofis
+    name: str
+    title: str = "Gayrimenkul Danışmanı"  # Ünvan
+    phone: str
+    email: str
+    photo_url: Optional[str] = None
+    bio: Optional[str] = None  # Kısa biyografi
+    specialization: Optional[List[str]] = None  # Uzmanlık alanları: ["konut", "ticari", "arsa"]
+    languages: Optional[List[str]] = None  # Bilinen diller
+    experience_years: Optional[int] = None  # Deneyim yılı
+    social_media: Optional[dict] = None  # {"linkedin": "...", "instagram": "..."}
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ConsultantCreate(BaseModel):
+    franchise_id: str
+    name: str
+    title: str = "Gayrimenkul Danışmanı"
+    phone: str
+    email: str
+    photo_url: Optional[str] = None
+    bio: Optional[str] = None
+    specialization: Optional[List[str]] = None
+    languages: Optional[List[str]] = None
+    experience_years: Optional[int] = None
+    social_media: Optional[dict] = None
+
+class ConsultantUpdate(BaseModel):
+    name: Optional[str] = None
+    title: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    photo_url: Optional[str] = None
+    bio: Optional[str] = None
+    specialization: Optional[List[str]] = None
+    languages: Optional[List[str]] = None
+    experience_years: Optional[int] = None
+    social_media: Optional[dict] = None
+    active: Optional[bool] = None
+

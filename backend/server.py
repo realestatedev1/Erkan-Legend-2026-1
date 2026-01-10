@@ -2008,6 +2008,231 @@ async def get_price_alerts(customer: dict = Depends(require_customer)):
     return {"price_alerts": alerts}
 
 
+# ============ GOOGLE OAUTH AUTHENTICATION ============
+
+import httpx
+from fastapi import Response, Cookie
+
+@api_router.get("/customer/auth/session")
+async def process_oauth_session(
+    response: Response,
+    session_id: str
+):
+    """
+    Process Google OAuth session from Emergent Auth
+    Exchange session_id for user data and create/update customer
+    """
+    try:
+        # Exchange session_id for user data from Emergent Auth
+        async with httpx.AsyncClient(timeout=30.0) as http_client:
+            auth_response = await http_client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id}
+            )
+            
+            if auth_response.status_code != 200:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Geçersiz oturum. Lütfen tekrar giriş yapın."
+                )
+            
+            user_data = auth_response.json()
+    except httpx.RequestError as e:
+        logger.error(f"OAuth session exchange error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Kimlik doğrulama servisi ile bağlantı kurulamadı"
+        )
+    
+    # Extract user info
+    email = user_data.get("email", "").lower()
+    name = user_data.get("name", "")
+    picture = user_data.get("picture", "")
+    session_token = user_data.get("session_token", "")
+    
+    if not email:
+        raise HTTPException(status_code=400, detail="E-posta adresi alınamadı")
+    
+    # Check if customer exists
+    existing_customer = await db.customers.find_one({"email": email}, {"_id": 0})
+    
+    if existing_customer:
+        # Update existing customer
+        update_data = {
+            "last_login": datetime.now(timezone.utc),
+            "profile_image": picture if picture else existing_customer.get("profile_image"),
+            "google_id": user_data.get("id"),
+            "auth_provider": "google"
+        }
+        if not existing_customer.get("name"):
+            update_data["name"] = name
+            
+        await db.customers.update_one(
+            {"email": email},
+            {"$set": update_data}
+        )
+        customer_id = existing_customer["id"]
+        customer_name = existing_customer.get("name") or name
+    else:
+        # Create new customer
+        customer_id = str(uuid.uuid4())
+        new_customer = {
+            "id": customer_id,
+            "email": email,
+            "name": name,
+            "password_hash": "",  # No password for OAuth users
+            "profile_image": picture,
+            "google_id": user_data.get("id"),
+            "auth_provider": "google",
+            "favorites": [],
+            "saved_searches": [],
+            "price_alerts": [],
+            "created_at": datetime.now(timezone.utc),
+            "last_login": datetime.now(timezone.utc),
+            "active": True,
+            "email_verified": True  # Google emails are already verified
+        }
+        await db.customers.insert_one(new_customer)
+        customer_name = name
+        
+        # Create welcome notification
+        notification = {
+            "id": str(uuid.uuid4()),
+            "customer_id": customer_id,
+            "type": "system",
+            "title": "Hoş Geldiniz!",
+            "message": f"Merhaba {name}, Legend Cities'e hoş geldiniz!",
+            "read": False,
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.notifications.insert_one(notification)
+    
+    # Store session in database
+    session_doc = {
+        "id": str(uuid.uuid4()),
+        "customer_id": customer_id,
+        "session_token": session_token,
+        "expires_at": datetime.now(timezone.utc) + timedelta(days=7),
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.customer_sessions.insert_one(session_doc)
+    
+    # Set httpOnly cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=7 * 24 * 60 * 60,  # 7 days
+        path="/"
+    )
+    
+    # Also return JWT token for API calls
+    jwt_token = create_access_token({
+        "sub": customer_id,
+        "type": "customer",
+        "email": email
+    })
+    
+    return {
+        "success": True,
+        "token": jwt_token,
+        "customer": {
+            "id": customer_id,
+            "email": email,
+            "name": customer_name,
+            "profile_image": picture,
+            "auth_provider": "google"
+        }
+    }
+
+
+@api_router.get("/customer/auth/me")
+async def get_current_customer_from_session(
+    session_token: str = Cookie(None),
+    credentials: HTTPAuthorizationCredentials = Depends(customer_security)
+):
+    """
+    Get current customer from session cookie or Authorization header
+    """
+    customer = None
+    
+    # First try cookie-based session
+    if session_token:
+        session = await db.customer_sessions.find_one(
+            {"session_token": session_token},
+            {"_id": 0}
+        )
+        
+        if session:
+            # Check expiry
+            expires_at = session.get("expires_at")
+            if isinstance(expires_at, str):
+                expires_at = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+            if expires_at.tzinfo is None:
+                expires_at = expires_at.replace(tzinfo=timezone.utc)
+            
+            if expires_at > datetime.now(timezone.utc):
+                customer = await db.customers.find_one(
+                    {"id": session["customer_id"]},
+                    {"_id": 0}
+                )
+    
+    # Fallback to JWT token
+    if not customer and credentials:
+        try:
+            payload = jwt.decode(
+                credentials.credentials,
+                SECRET_KEY,
+                algorithms=["HS256"]
+            )
+            if payload.get("type") == "customer":
+                customer = await db.customers.find_one(
+                    {"id": payload["sub"]},
+                    {"_id": 0}
+                )
+        except:
+            pass
+    
+    if not customer:
+        raise HTTPException(status_code=401, detail="Oturum geçersiz veya süresi dolmuş")
+    
+    if not customer.get("active", True):
+        raise HTTPException(status_code=403, detail="Hesap devre dışı")
+    
+    return {
+        "id": customer["id"],
+        "email": customer["email"],
+        "name": customer.get("name"),
+        "phone": customer.get("phone"),
+        "profile_image": customer.get("profile_image"),
+        "favorites": customer.get("favorites", []),
+        "auth_provider": customer.get("auth_provider", "email")
+    }
+
+
+@api_router.post("/customer/auth/logout")
+async def logout_customer(
+    response: Response,
+    session_token: str = Cookie(None)
+):
+    """Logout customer and clear session"""
+    if session_token:
+        # Delete session from database
+        await db.customer_sessions.delete_one({"session_token": session_token})
+    
+    # Clear cookie
+    response.delete_cookie(
+        key="session_token",
+        path="/",
+        secure=True,
+        samesite="none"
+    )
+    
+    return {"message": "Çıkış yapıldı"}
+
+
 # Include router and add CORS
 app.include_router(api_router)
 

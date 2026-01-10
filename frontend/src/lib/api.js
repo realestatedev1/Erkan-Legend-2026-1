@@ -87,4 +87,23 @@ export const locationAPI = {
   seedNeighborhoods: (cityName) => api.post('/locations/seed-neighborhoods', null, { params: { city_name: cityName } }),
 };
 
+// Consultant API - Danışmanlar
+export const consultantAPI = {
+  getAll: (franchiseId = null, activeOnly = true) => 
+    api.get('/consultants', { params: { franchise_id: franchiseId, active_only: activeOnly } }),
+  getById: (id) => api.get(`/consultants/${id}`),
+  getByFranchise: (franchiseId, activeOnly = true) => 
+    api.get(`/franchises/${franchiseId}/consultants`, { params: { active_only: activeOnly } }),
+  create: (data) => api.post('/consultants', data),
+  update: (id, data) => api.put(`/consultants/${id}`, data),
+  delete: (id) => api.delete(`/consultants/${id}`),
+  uploadPhoto: (consultantId, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/consultants/${consultantId}/upload-photo`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};
+
 export default api;

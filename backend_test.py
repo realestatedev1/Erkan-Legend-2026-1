@@ -13,7 +13,7 @@ from typing import Dict, Any, Optional
 BASE_URL = "https://devam-project-2.preview.emergentagent.com/api"
 ADMIN_CREDENTIALS = {
     "username": "admin", 
-    "password": "admin123"
+    "password": "LegendCities2025!"
 }
 
 class ConsultantAPITester:

@@ -19,7 +19,8 @@ from models import (
     CareerApplication, CareerApplicationCreate,
     FranchiseApplication, FranchiseApplicationCreate,
     Customer, CustomerCreate, CustomerLogin, CustomerUpdate,
-    Notification, SavedSearch, PriceAlert
+    Notification, SavedSearch, PriceAlert,
+    Consultant, ConsultantCreate, ConsultantUpdate
 )
 from auth import (
     get_password_hash, verify_password, create_access_token,

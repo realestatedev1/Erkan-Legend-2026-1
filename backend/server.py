@@ -2095,6 +2095,14 @@ async def create_consultant(
     if not franchise:
         raise HTTPException(status_code=404, detail="Ofis bulunamadı")
     
+    # Franchise admin can only add consultants to their own office
+    if current_user.get("role") == "franchise_admin":
+        if current_user.get("franchise_id") != consultant_data.franchise_id:
+            raise HTTPException(
+                status_code=403, 
+                detail="Sadece kendi ofisinize danışman ekleyebilirsiniz"
+            )
+    
     # Check for duplicate email in same franchise
     existing = await db.consultants.find_one({
         "email": consultant_data.email,
@@ -2120,6 +2128,14 @@ async def update_consultant(
     if not consultant:
         raise HTTPException(status_code=404, detail="Danışman bulunamadı")
     
+    # Franchise admin can only update consultants in their own office
+    if current_user.get("role") == "franchise_admin":
+        if current_user.get("franchise_id") != consultant.get("franchise_id"):
+            raise HTTPException(
+                status_code=403, 
+                detail="Sadece kendi ofisinizin danışmanlarını düzenleyebilirsiniz"
+            )
+    
     update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
     
     if update_dict:
@@ -2141,6 +2157,14 @@ async def delete_consultant(
     consultant = await db.consultants.find_one({"id": consultant_id})
     if not consultant:
         raise HTTPException(status_code=404, detail="Danışman bulunamadı")
+    
+    # Franchise admin can only delete consultants in their own office
+    if current_user.get("role") == "franchise_admin":
+        if current_user.get("franchise_id") != consultant.get("franchise_id"):
+            raise HTTPException(
+                status_code=403, 
+                detail="Sadece kendi ofisinizin danışmanlarını silebilirsiniz"
+            )
     
     await db.consultants.delete_one({"id": consultant_id})
     return {"message": "Danışman silindi"}

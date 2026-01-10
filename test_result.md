@@ -102,9 +102,82 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Add English language option to Legend Cities real estate website - Turkish/English language switching"
+user_problem_statement: "Add consultant management to Legend Cities real estate website - Offices should have consultants"
+
+backend:
+  - task: "Consultant Model"
+    implemented: true
+    working: "NA"
+    file: "backend/models.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created Consultant, ConsultantCreate, ConsultantUpdate models with fields: franchise_id, name, title, phone, email, photo_url, bio, specialization, languages, experience_years, social_media, active"
+
+  - task: "Consultant CRUD Endpoints"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created endpoints: GET /consultants, GET /consultants/{id}, GET /franchises/{id}/consultants, POST /consultants, PUT /consultants/{id}, DELETE /consultants/{id}, POST /consultants/{id}/upload-photo"
 
 frontend:
+  - task: "Consultant API Integration"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/lib/api.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added consultantAPI with getAll, getById, getByFranchise, create, update, delete, uploadPhoto methods"
+
+  - task: "OfficeDetail Consultants Display"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/OfficeDetail.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated OfficeDetail page to display consultants with photo, name, title, experience, specialization, phone/WhatsApp buttons"
+
+  - task: "Admin Consultant Management Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/admin/ConsultantManagement.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created ConsultantManagement page with CRUD operations, photo upload, search, filter by franchise"
+
+  - task: "Admin Dashboard Consultant Link"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/admin/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added Danışmanlar link to admin dashboard quick links section"
+
   - task: "i18n Configuration Setup"
     implemented: true
     working: true

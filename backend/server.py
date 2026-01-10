@@ -2009,6 +2009,175 @@ async def get_price_alerts(customer: dict = Depends(require_customer)):
     return {"price_alerts": alerts}
 
 
+# ============ CONSULTANT ENDPOINTS ============
+
+@api_router.get("/consultants")
+async def get_consultants(
+    franchise_id: Optional[str] = None,
+    active_only: bool = True
+):
+    """Get all consultants, optionally filtered by franchise"""
+    query = {}
+    if franchise_id:
+        query["franchise_id"] = franchise_id
+    if active_only:
+        query["active"] = True
+    
+    consultants = await db.consultants.find(query, {"_id": 0}).to_list(500)
+    
+    # Enrich with franchise info
+    for consultant in consultants:
+        franchise = await db.franchises.find_one(
+            {"id": consultant.get("franchise_id")}, 
+            {"_id": 0, "office_name": 1, "city": 1, "district": 1}
+        )
+        if franchise:
+            consultant["franchise_name"] = franchise.get("office_name")
+            consultant["franchise_city"] = franchise.get("city")
+            consultant["franchise_district"] = franchise.get("district")
+    
+    return consultants
+
+
+@api_router.get("/consultants/{consultant_id}")
+async def get_consultant(consultant_id: str):
+    """Get a specific consultant by ID"""
+    consultant = await db.consultants.find_one({"id": consultant_id}, {"_id": 0})
+    if not consultant:
+        raise HTTPException(status_code=404, detail="Danışman bulunamadı")
+    
+    # Get franchise info
+    franchise = await db.franchises.find_one(
+        {"id": consultant.get("franchise_id")}, 
+        {"_id": 0, "office_name": 1, "city": 1, "district": 1, "phone": 1, "address": 1}
+    )
+    if franchise:
+        consultant["franchise"] = franchise
+    
+    # Get consultant's active properties count
+    properties_count = await db.properties.count_documents({
+        "franchise_id": consultant.get("franchise_id"),
+        "active": True
+    })
+    consultant["properties_count"] = properties_count
+    
+    return consultant
+
+
+@api_router.get("/franchises/{franchise_id}/consultants")
+async def get_franchise_consultants(franchise_id: str, active_only: bool = True):
+    """Get all consultants for a specific franchise/office"""
+    # Verify franchise exists
+    franchise = await db.franchises.find_one({"id": franchise_id}, {"_id": 0})
+    if not franchise:
+        raise HTTPException(status_code=404, detail="Ofis bulunamadı")
+    
+    query = {"franchise_id": franchise_id}
+    if active_only:
+        query["active"] = True
+    
+    consultants = await db.consultants.find(query, {"_id": 0}).to_list(100)
+    
+    return {
+        "franchise": franchise,
+        "consultants": consultants
+    }
+
+
+@api_router.post("/consultants")
+async def create_consultant(
+    consultant_data: ConsultantCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create a new consultant (admin only)"""
+    # Verify franchise exists
+    franchise = await db.franchises.find_one({"id": consultant_data.franchise_id})
+    if not franchise:
+        raise HTTPException(status_code=404, detail="Ofis bulunamadı")
+    
+    # Check for duplicate email in same franchise
+    existing = await db.consultants.find_one({
+        "email": consultant_data.email,
+        "franchise_id": consultant_data.franchise_id
+    })
+    if existing:
+        raise HTTPException(status_code=400, detail="Bu e-posta adresi bu ofiste zaten kayıtlı")
+    
+    consultant = Consultant(**consultant_data.model_dump())
+    await db.consultants.insert_one(consultant.model_dump())
+    
+    return {"message": "Danışman başarıyla eklendi", "consultant": consultant.model_dump()}
+
+
+@api_router.put("/consultants/{consultant_id}")
+async def update_consultant(
+    consultant_id: str,
+    update_data: ConsultantUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update a consultant (admin only)"""
+    consultant = await db.consultants.find_one({"id": consultant_id})
+    if not consultant:
+        raise HTTPException(status_code=404, detail="Danışman bulunamadı")
+    
+    update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
+    
+    if update_dict:
+        await db.consultants.update_one(
+            {"id": consultant_id},
+            {"$set": update_dict}
+        )
+    
+    updated = await db.consultants.find_one({"id": consultant_id}, {"_id": 0})
+    return {"message": "Danışman güncellendi", "consultant": updated}
+
+
+@api_router.delete("/consultants/{consultant_id}")
+async def delete_consultant(
+    consultant_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Delete a consultant (admin only)"""
+    consultant = await db.consultants.find_one({"id": consultant_id})
+    if not consultant:
+        raise HTTPException(status_code=404, detail="Danışman bulunamadı")
+    
+    await db.consultants.delete_one({"id": consultant_id})
+    return {"message": "Danışman silindi"}
+
+
+@api_router.post("/consultants/{consultant_id}/upload-photo")
+async def upload_consultant_photo(
+    consultant_id: str,
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """Upload consultant photo"""
+    consultant = await db.consultants.find_one({"id": consultant_id})
+    if not consultant:
+        raise HTTPException(status_code=404, detail="Danışman bulunamadı")
+    
+    # Save file
+    upload_dir = ROOT_DIR / "static" / "consultants"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    file_extension = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    filename = f"{consultant_id}.{file_extension}"
+    file_path = upload_dir / filename
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    photo_url = f"/static/consultants/{filename}"
+    
+    await db.consultants.update_one(
+        {"id": consultant_id},
+        {"$set": {"photo_url": photo_url}}
+    )
+    
+    return {"message": "Fotoğraf yüklendi", "photo_url": photo_url}
+
+
 # Include router and add CORS
 app.include_router(api_router)
 

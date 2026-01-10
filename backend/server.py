@@ -23,8 +23,9 @@ from models import (
 )
 from auth import (
     get_password_hash, verify_password, create_access_token,
-    get_current_user, require_super_admin
+    get_current_user, require_super_admin, SECRET_KEY
 )
+from datetime import timedelta
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')

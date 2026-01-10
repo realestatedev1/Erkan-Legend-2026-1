@@ -249,3 +249,65 @@ class FranchiseApplicationCreate(BaseModel):
     experience: Optional[str] = None
     investment_amount: Optional[str] = None
     message: Optional[str] = None
+
+
+# ============ CUSTOMER MODELS ============
+
+class Customer(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: str
+    password_hash: str
+    name: str
+    phone: Optional[str] = None
+    profile_image: Optional[str] = None
+    favorites: List[str] = []  # Property IDs
+    saved_searches: List[dict] = []  # Saved search criteria
+    price_alerts: List[dict] = []  # Price alert subscriptions
+    email_subscriptions: List[dict] = []  # Email subscription preferences
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_login: Optional[datetime] = None
+    active: bool = True
+    email_verified: bool = False
+
+class CustomerCreate(BaseModel):
+    email: str
+    password: str
+    name: str
+    phone: Optional[str] = None
+
+class CustomerLogin(BaseModel):
+    email: str
+    password: str
+
+class CustomerUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    profile_image: Optional[str] = None
+
+# ============ NOTIFICATION MODELS ============
+
+class Notification(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    type: str  # "price_drop", "new_listing", "favorite_update", "system"
+    title: str
+    message: str
+    data: Optional[dict] = None  # Additional data (property_id, etc.)
+    read: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SavedSearch(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    criteria: dict  # Search filters
+    email_alert: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PriceAlert(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    property_id: str
+    target_price: float
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+

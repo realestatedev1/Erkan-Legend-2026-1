@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { useCustomerAuth } from '../context/CustomerAuthContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCompare } from '../context/CompareContext';
 import LanguageSwitcher from './LanguageSwitcher';
+import NotificationCenter from './NotificationCenter';
+import { User, LogOut, Settings, Heart, ChevronDown } from 'lucide-react';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [customerMenuOpen, setCustomerMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { customer, logout: customerLogout } = useCustomerAuth();
   const { favoritesCount } = useFavorites();
   const { compareCount } = useCompare();
   const navigate = useNavigate();
@@ -20,7 +25,13 @@ const Header = () => {
     navigate('/');
   };
 
-  // Mobil menüde link tıklandığında menüyü kapat
+  const handleCustomerLogout = async () => {
+    await customerLogout();
+    setCustomerMenuOpen(false);
+    setMobileMenuOpen(false);
+    navigate('/');
+  };
+
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
@@ -75,7 +86,69 @@ const Header = () => {
             
             {/* Language Switcher */}
             <LanguageSwitcher />
+
+            {/* Customer Notification Center */}
+            {customer && <NotificationCenter />}
             
+            {/* Customer Auth Section */}
+            {customer ? (
+              <div className="relative">
+                <button
+                  onClick={() => setCustomerMenuOpen(!customerMenuOpen)}
+                  className="flex items-center gap-2 text-gray-700 hover:text-red-600 transition"
+                >
+                  {customer.profile_image ? (
+                    <img 
+                      src={customer.profile_image} 
+                      alt={customer.name}
+                      className="w-8 h-8 rounded-full object-cover border-2 border-gray-200"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                      <User className="w-5 h-5 text-red-600" />
+                    </div>
+                  )}
+                  <span className="hidden lg:inline text-sm font-medium max-w-[100px] truncate">
+                    {customer.name?.split(' ')[0]}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+
+                {customerMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900 truncate">{customer.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{customer.email}</p>
+                    </div>
+                    <Link
+                      to="/favorites"
+                      onClick={() => setCustomerMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <Heart className="w-4 h-4" />
+                      Favorilerim
+                    </Link>
+                    <button
+                      onClick={handleCustomerLogout}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Çıkış Yap
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link 
+                to="/giris" 
+                className="flex items-center gap-2 text-gray-700 hover:text-red-600 transition"
+              >
+                <User className="w-5 h-5" />
+                <span className="hidden lg:inline text-sm">{t('nav.customerLogin', 'Üye Girişi')}</span>
+              </Link>
+            )}
+            
+            {/* Admin Section */}
             {user ? (
               <>
                 <Link 
@@ -103,6 +176,8 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-3">
+            {/* Mobile Notifications */}
+            {customer && <NotificationCenter />}
             {/* Mobile Favorites */}
             <Link to="/favorites" className="relative text-gray-700" onClick={closeMobileMenu}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,6 +223,27 @@ const Header = () => {
             <Link to="/franchise" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.franchise')}</Link>
             <Link to="/career" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.career')}</Link>
             <Link to="/contact" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.contact')}</Link>
+            
+            <div className="border-t border-gray-200 mt-2 pt-2">
+              {customer ? (
+                <>
+                  <div className="py-2 flex items-center gap-2">
+                    {customer.profile_image ? (
+                      <img src={customer.profile_image} alt="" className="w-8 h-8 rounded-full" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                        <User className="w-5 h-5 text-red-600" />
+                      </div>
+                    )}
+                    <span className="text-sm font-medium">{customer.name}</span>
+                  </div>
+                  <button onClick={handleCustomerLogout} className="block py-2 text-red-600">Çıkış Yap</button>
+                </>
+              ) : (
+                <Link to="/giris" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">Üye Girişi</Link>
+              )}
+            </div>
+            
             {user ? (
               <>
                 <Link to="/admin" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.adminPanel')}</Link>

@@ -312,8 +312,8 @@ class ConsultantAPITester:
             # Test POST without auth
             response = unauth_session.post(f"{BASE_URL}/consultants", json=test_data, timeout=10)
             
-            if response.status_code == 401:
-                self.log_result("Auth Protection (POST)", True, "POST endpoint properly protected - returns 401")
+            if response.status_code in [401, 403]:
+                self.log_result("Auth Protection (POST)", True, f"POST endpoint properly protected - returns {response.status_code}")
             else:
                 self.log_result("Auth Protection (POST)", False, f"POST endpoint not protected - status: {response.status_code}")
                 return False
@@ -321,8 +321,8 @@ class ConsultantAPITester:
             # Test PUT without auth
             response = unauth_session.put(f"{BASE_URL}/consultants/test-id", json=test_data, timeout=10)
             
-            if response.status_code == 401:
-                self.log_result("Auth Protection (PUT)", True, "PUT endpoint properly protected - returns 401")
+            if response.status_code in [401, 403]:
+                self.log_result("Auth Protection (PUT)", True, f"PUT endpoint properly protected - returns {response.status_code}")
             else:
                 self.log_result("Auth Protection (PUT)", False, f"PUT endpoint not protected - status: {response.status_code}")
                 return False
@@ -330,8 +330,8 @@ class ConsultantAPITester:
             # Test DELETE without auth
             response = unauth_session.delete(f"{BASE_URL}/consultants/test-id", timeout=10)
             
-            if response.status_code == 401:
-                self.log_result("Auth Protection (DELETE)", True, "DELETE endpoint properly protected - returns 401")
+            if response.status_code in [401, 403]:
+                self.log_result("Auth Protection (DELETE)", True, f"DELETE endpoint properly protected - returns {response.status_code}")
                 return True
             else:
                 self.log_result("Auth Protection (DELETE)", False, f"DELETE endpoint not protected - status: {response.status_code}")

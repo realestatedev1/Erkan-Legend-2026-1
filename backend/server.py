@@ -17,7 +17,9 @@ from models import (
     Property, PropertyCreate,
     ContactMessage, ContactMessageCreate,
     CareerApplication, CareerApplicationCreate,
-    FranchiseApplication, FranchiseApplicationCreate
+    FranchiseApplication, FranchiseApplicationCreate,
+    Customer, CustomerCreate, CustomerLogin, CustomerUpdate,
+    Notification, SavedSearch, PriceAlert
 )
 from auth import (
     get_password_hash, verify_password, create_access_token,

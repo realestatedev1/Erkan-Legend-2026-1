@@ -1627,6 +1627,387 @@ async def get_location_stats():
     }
 
 
+# ============ CUSTOMER AUTHENTICATION ============
+
+@api_router.post("/customer/register")
+async def register_customer(customer_data: CustomerCreate):
+    """Register a new customer"""
+    # Check if email already exists
+    existing = await db.customers.find_one({"email": customer_data.email.lower()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Bu e-posta adresi zaten kayıtlı")
+    
+    # Create customer
+    customer = Customer(
+        email=customer_data.email.lower(),
+        password_hash=get_password_hash(customer_data.password),
+        name=customer_data.name,
+        phone=customer_data.phone
+    )
+    
+    await db.customers.insert_one(customer.model_dump())
+    
+    # Create welcome notification
+    notification = Notification(
+        customer_id=customer.id,
+        type="system",
+        title="Hoş Geldiniz!",
+        message=f"Merhaba {customer.name}, Legend Cities'e hoş geldiniz!"
+    )
+    await db.notifications.insert_one(notification.model_dump())
+    
+    # Generate token
+    token = create_access_token({"sub": customer.id, "type": "customer"})
+    
+    return {
+        "message": "Kayıt başarılı",
+        "token": token,
+        "customer": {
+            "id": customer.id,
+            "email": customer.email,
+            "name": customer.name,
+            "phone": customer.phone
+        }
+    }
+
+@api_router.post("/customer/login")
+async def login_customer(login_data: CustomerLogin):
+    """Customer login"""
+    customer = await db.customers.find_one({"email": login_data.email.lower()})
+    
+    if not customer or not verify_password(login_data.password, customer["password_hash"]):
+        raise HTTPException(status_code=401, detail="Geçersiz e-posta veya şifre")
+    
+    if not customer.get("active", True):
+        raise HTTPException(status_code=403, detail="Hesabınız devre dışı bırakılmış")
+    
+    # Update last login
+    await db.customers.update_one(
+        {"id": customer["id"]},
+        {"$set": {"last_login": datetime.now(timezone.utc)}}
+    )
+    
+    token = create_access_token({"sub": customer["id"], "type": "customer"})
+    
+    return {
+        "token": token,
+        "customer": {
+            "id": customer["id"],
+            "email": customer["email"],
+            "name": customer["name"],
+            "phone": customer.get("phone"),
+            "profile_image": customer.get("profile_image"),
+            "favorites": customer.get("favorites", [])
+        }
+    }
+
+async def get_current_customer(token: str = Depends(lambda: None)):
+    """Get current customer from token - will be implemented with proper auth"""
+    from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+    from jose import jwt, JWTError
+    
+    security = HTTPBearer()
+    
+    async def verify(credentials: HTTPAuthorizationCredentials = Depends(security)):
+        try:
+            payload = jwt.decode(
+                credentials.credentials,
+                os.environ.get("JWT_SECRET_KEY", "secret"),
+                algorithms=["HS256"]
+            )
+            customer_id = payload.get("sub")
+            token_type = payload.get("type")
+            
+            if token_type != "customer":
+                raise HTTPException(status_code=401, detail="Geçersiz token türü")
+            
+            customer = await db.customers.find_one({"id": customer_id})
+            if not customer:
+                raise HTTPException(status_code=401, detail="Müşteri bulunamadı")
+            
+            return customer
+        except JWTError:
+            raise HTTPException(status_code=401, detail="Geçersiz token")
+    
+    return verify
+
+# Create actual dependency
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import jwt, JWTError
+
+customer_security = HTTPBearer(auto_error=False)
+
+async def get_optional_customer(credentials: HTTPAuthorizationCredentials = Depends(customer_security)):
+    """Get current customer if token provided"""
+    if not credentials:
+        return None
+    try:
+        payload = jwt.decode(
+            credentials.credentials,
+            os.environ.get("JWT_SECRET_KEY", "secret"),
+            algorithms=["HS256"]
+        )
+        customer_id = payload.get("sub")
+        token_type = payload.get("type")
+        
+        if token_type != "customer":
+            return None
+        
+        customer = await db.customers.find_one({"id": customer_id})
+        return customer
+    except:
+        return None
+
+async def require_customer(credentials: HTTPAuthorizationCredentials = Depends(customer_security)):
+    """Require authenticated customer"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Giriş yapmanız gerekiyor")
+    try:
+        payload = jwt.decode(
+            credentials.credentials,
+            os.environ.get("JWT_SECRET_KEY", "secret"),
+            algorithms=["HS256"]
+        )
+        customer_id = payload.get("sub")
+        token_type = payload.get("type")
+        
+        if token_type != "customer":
+            raise HTTPException(status_code=401, detail="Geçersiz token türü")
+        
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=401, detail="Müşteri bulunamadı")
+        
+        return customer
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Geçersiz token")
+
+@api_router.get("/customer/profile")
+async def get_customer_profile(customer: dict = Depends(require_customer)):
+    """Get customer profile"""
+    return {
+        "id": customer["id"],
+        "email": customer["email"],
+        "name": customer["name"],
+        "phone": customer.get("phone"),
+        "profile_image": customer.get("profile_image"),
+        "favorites": customer.get("favorites", []),
+        "saved_searches": customer.get("saved_searches", []),
+        "price_alerts": customer.get("price_alerts", []),
+        "created_at": customer.get("created_at")
+    }
+
+@api_router.put("/customer/profile")
+async def update_customer_profile(update_data: CustomerUpdate, customer: dict = Depends(require_customer)):
+    """Update customer profile"""
+    update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
+    
+    if update_dict:
+        await db.customers.update_one(
+            {"id": customer["id"]},
+            {"$set": update_dict}
+        )
+    
+    updated = await db.customers.find_one({"id": customer["id"]})
+    return {
+        "message": "Profil güncellendi",
+        "customer": {
+            "id": updated["id"],
+            "email": updated["email"],
+            "name": updated["name"],
+            "phone": updated.get("phone"),
+            "profile_image": updated.get("profile_image")
+        }
+    }
+
+# ============ CUSTOMER FAVORITES ============
+
+@api_router.post("/customer/favorites/{property_id}")
+async def add_to_favorites(property_id: str, customer: dict = Depends(require_customer)):
+    """Add property to favorites"""
+    # Check if property exists
+    property = await db.properties.find_one({"id": property_id})
+    if not property:
+        raise HTTPException(status_code=404, detail="İlan bulunamadı")
+    
+    favorites = customer.get("favorites", [])
+    if property_id not in favorites:
+        favorites.append(property_id)
+        await db.customers.update_one(
+            {"id": customer["id"]},
+            {"$set": {"favorites": favorites}}
+        )
+    
+    return {"message": "Favorilere eklendi", "favorites": favorites}
+
+@api_router.delete("/customer/favorites/{property_id}")
+async def remove_from_favorites(property_id: str, customer: dict = Depends(require_customer)):
+    """Remove property from favorites"""
+    favorites = customer.get("favorites", [])
+    if property_id in favorites:
+        favorites.remove(property_id)
+        await db.customers.update_one(
+            {"id": customer["id"]},
+            {"$set": {"favorites": favorites}}
+        )
+    
+    return {"message": "Favorilerden çıkarıldı", "favorites": favorites}
+
+@api_router.get("/customer/favorites")
+async def get_favorites(customer: dict = Depends(require_customer)):
+    """Get customer's favorite properties"""
+    favorites = customer.get("favorites", [])
+    if not favorites:
+        return {"properties": [], "total": 0}
+    
+    properties = await db.properties.find(
+        {"id": {"$in": favorites}, "active": True}
+    ).to_list(100)
+    
+    # Remove MongoDB _id
+    for p in properties:
+        p.pop("_id", None)
+    
+    return {"properties": properties, "total": len(properties)}
+
+# ============ NOTIFICATIONS ============
+
+@api_router.get("/customer/notifications")
+async def get_notifications(
+    unread_only: bool = False,
+    limit: int = 20,
+    customer: dict = Depends(require_customer)
+):
+    """Get customer notifications"""
+    query = {"customer_id": customer["id"]}
+    if unread_only:
+        query["read"] = False
+    
+    notifications = await db.notifications.find(query).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    for n in notifications:
+        n.pop("_id", None)
+    
+    unread_count = await db.notifications.count_documents({"customer_id": customer["id"], "read": False})
+    
+    return {
+        "notifications": notifications,
+        "unread_count": unread_count
+    }
+
+@api_router.put("/customer/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str, customer: dict = Depends(require_customer)):
+    """Mark notification as read"""
+    result = await db.notifications.update_one(
+        {"id": notification_id, "customer_id": customer["id"]},
+        {"$set": {"read": True}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Bildirim bulunamadı")
+    
+    return {"message": "Bildirim okundu olarak işaretlendi"}
+
+@api_router.put("/customer/notifications/read-all")
+async def mark_all_notifications_read(customer: dict = Depends(require_customer)):
+    """Mark all notifications as read"""
+    await db.notifications.update_many(
+        {"customer_id": customer["id"], "read": False},
+        {"$set": {"read": True}}
+    )
+    
+    return {"message": "Tüm bildirimler okundu olarak işaretlendi"}
+
+# ============ SAVED SEARCHES ============
+
+@api_router.post("/customer/saved-searches")
+async def save_search(
+    name: str,
+    criteria: dict,
+    email_alert: bool = False,
+    customer: dict = Depends(require_customer)
+):
+    """Save a search"""
+    saved_search = {
+        "id": str(uuid.uuid4()),
+        "name": name,
+        "criteria": criteria,
+        "email_alert": email_alert,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.customers.update_one(
+        {"id": customer["id"]},
+        {"$push": {"saved_searches": saved_search}}
+    )
+    
+    return {"message": "Arama kaydedildi", "saved_search": saved_search}
+
+@api_router.delete("/customer/saved-searches/{search_id}")
+async def delete_saved_search(search_id: str, customer: dict = Depends(require_customer)):
+    """Delete a saved search"""
+    await db.customers.update_one(
+        {"id": customer["id"]},
+        {"$pull": {"saved_searches": {"id": search_id}}}
+    )
+    
+    return {"message": "Kayıtlı arama silindi"}
+
+# ============ PRICE ALERTS ============
+
+@api_router.post("/customer/price-alerts")
+async def create_price_alert(
+    property_id: str,
+    target_price: float,
+    customer: dict = Depends(require_customer)
+):
+    """Create a price drop alert for a property"""
+    # Check if property exists
+    property = await db.properties.find_one({"id": property_id})
+    if not property:
+        raise HTTPException(status_code=404, detail="İlan bulunamadı")
+    
+    price_alert = {
+        "id": str(uuid.uuid4()),
+        "property_id": property_id,
+        "property_title": property.get("title"),
+        "original_price": property.get("price"),
+        "target_price": target_price,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.customers.update_one(
+        {"id": customer["id"]},
+        {"$push": {"price_alerts": price_alert}}
+    )
+    
+    return {"message": "Fiyat alarmı oluşturuldu", "price_alert": price_alert}
+
+@api_router.delete("/customer/price-alerts/{alert_id}")
+async def delete_price_alert(alert_id: str, customer: dict = Depends(require_customer)):
+    """Delete a price alert"""
+    await db.customers.update_one(
+        {"id": customer["id"]},
+        {"$pull": {"price_alerts": {"id": alert_id}}}
+    )
+    
+    return {"message": "Fiyat alarmı silindi"}
+
+@api_router.get("/customer/price-alerts")
+async def get_price_alerts(customer: dict = Depends(require_customer)):
+    """Get all price alerts"""
+    alerts = customer.get("price_alerts", [])
+    
+    # Enrich with current property prices
+    for alert in alerts:
+        property = await db.properties.find_one({"id": alert.get("property_id")})
+        if property:
+            alert["current_price"] = property.get("price")
+            alert["price_dropped"] = property.get("price", 0) <= alert.get("target_price", 0)
+    
+    return {"price_alerts": alerts}
+
+
 # Include router and add CORS
 app.include_router(api_router)
 

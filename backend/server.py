@@ -2181,6 +2181,14 @@ async def upload_consultant_photo(
     if not consultant:
         raise HTTPException(status_code=404, detail="Danışman bulunamadı")
     
+    # Franchise admin can only upload photos for consultants in their own office
+    if current_user.get("role") == "franchise_admin":
+        if current_user.get("franchise_id") != consultant.get("franchise_id"):
+            raise HTTPException(
+                status_code=403, 
+                detail="Sadece kendi ofisinizin danışmanlarının fotoğraflarını yükleyebilirsiniz"
+            )
+    
     # Save file
     upload_dir = ROOT_DIR / "static" / "consultants"
     upload_dir.mkdir(parents=True, exist_ok=True)

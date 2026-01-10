@@ -1,6 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { CustomerAuthProvider } from './context/CustomerAuthContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { CompareProvider } from './context/CompareContext';
 import Header from './components/Header';
@@ -21,6 +22,8 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Favorites from './pages/Favorites';
 import Compare from './pages/Compare';
+import CustomerLogin from './pages/CustomerLogin';
+import AuthCallback from './pages/AuthCallback';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -47,7 +50,16 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-const AppRoutes = () => {
+// Check for OAuth callback - must be done synchronously before rendering routes
+const AppRouter = () => {
+  const location = useLocation();
+  
+  // Check URL fragment for session_id (OAuth callback)
+  // This must be done BEFORE rendering routes to prevent race conditions
+  if (location.hash?.includes('session_id=')) {
+    return <AuthCallback />;
+  }
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -65,8 +77,10 @@ const AppRoutes = () => {
           <Route path="/career" element={<Career />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/giris" element={<CustomerLogin />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/compare" element={<Compare />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
@@ -84,13 +98,15 @@ const AppRoutes = () => {
 function App() {
   return (
     <AuthProvider>
-      <FavoritesProvider>
-        <CompareProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </CompareProvider>
-      </FavoritesProvider>
+      <CustomerAuthProvider>
+        <FavoritesProvider>
+          <CompareProvider>
+            <BrowserRouter>
+              <AppRouter />
+            </BrowserRouter>
+          </CompareProvider>
+        </FavoritesProvider>
+      </CustomerAuthProvider>
     </AuthProvider>
   );
 }

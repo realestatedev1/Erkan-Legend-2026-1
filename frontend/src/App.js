@@ -26,6 +26,7 @@ import Compare from './pages/Compare';
 import AdminDashboard from './pages/admin/Dashboard';
 import PropertyManagement from './pages/admin/PropertyManagement';
 import FranchiseManagement from './pages/admin/FranchiseManagement';
+import ConsultantManagement from './pages/admin/ConsultantManagement';
 import Messages from './pages/admin/Messages';
 import Applications from './pages/admin/Applications';
 

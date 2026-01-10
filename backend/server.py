@@ -2009,15 +2009,12 @@ async def get_price_alerts(customer: dict = Depends(require_customer)):
     return {"price_alerts": alerts}
 
 
-# ============ GOOGLE OAUTH AUTHENTICATION ============
+# Include router and add CORS
+app.include_router(api_router)
 
-import httpx
-from fastapi import Response, Cookie
-
-@api_router.get("/customer/auth/session")
-async def process_oauth_session(
-    response: Response,
-    session_id: str
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    client.close()
 ):
     """
     Process Google OAuth session from Emergent Auth

@@ -20,7 +20,7 @@ from models import (
     FranchiseApplication, FranchiseApplicationCreate,
     Customer, CustomerCreate, CustomerLogin, CustomerUpdate,
     Notification, SavedSearch, PriceAlert,
-    Consultant, ConsultantCreate, ConsultantUpdate
+    Consultant, ConsultantCreate, ConsultantUpdate, ConsultantLogin
 )
 from auth import (
     get_password_hash, verify_password, create_access_token,

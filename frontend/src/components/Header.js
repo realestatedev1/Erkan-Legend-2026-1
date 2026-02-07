@@ -162,6 +162,13 @@ const Header = () => {
             <Link to="/franchise" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.franchise')}</Link>
             <Link to="/career" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.career')}</Link>
             <Link to="/contact" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.contact')}</Link>
+            
+            <div className="border-t border-gray-200 mt-2 pt-2">
+              <Link to="/consultant/login" onClick={closeMobileMenu} className="block py-2 text-red-600 font-medium">
+                🔐 {t('nav.consultantPortal', 'Danışman Girişi')}
+              </Link>
+            </div>
+            
             {user ? (
               <>
                 <Link to="/admin" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.adminPanel')}</Link>

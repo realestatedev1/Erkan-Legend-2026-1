@@ -2245,6 +2245,262 @@ async def upload_consultant_photo(
     return {"message": "Fotoğraf yüklendi", "photo_url": photo_url}
 
 
+# ============ CONSULTANT PORTAL ENDPOINTS ============
+
+consultant_security = HTTPBearer(auto_error=False)
+
+@api_router.post("/consultant/login")
+async def consultant_login(login_data: ConsultantLogin):
+    """Consultant login endpoint"""
+    consultant = await db.consultants.find_one({"username": login_data.username})
+    
+    if not consultant:
+        raise HTTPException(status_code=401, detail="Kullanıcı adı veya şifre hatalı")
+    
+    if not consultant.get("can_login"):
+        raise HTTPException(status_code=403, detail="Giriş yetkiniz bulunmuyor")
+    
+    if not consultant.get("active"):
+        raise HTTPException(status_code=403, detail="Hesabınız devre dışı")
+    
+    if not verify_password(login_data.password, consultant.get("password_hash", "")):
+        raise HTTPException(status_code=401, detail="Kullanıcı adı veya şifre hatalı")
+    
+    # Update last login
+    await db.consultants.update_one(
+        {"id": consultant["id"]},
+        {"$set": {"last_login": datetime.now(timezone.utc)}}
+    )
+    
+    # Create token
+    token = create_access_token({
+        "sub": consultant["id"],
+        "type": "consultant",
+        "franchise_id": consultant["franchise_id"]
+    })
+    
+    # Get franchise info
+    franchise = await db.franchises.find_one({"id": consultant["franchise_id"]}, {"_id": 0, "office_name": 1})
+    
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "consultant": {
+            "id": consultant["id"],
+            "name": consultant["name"],
+            "title": consultant.get("title"),
+            "email": consultant["email"],
+            "phone": consultant["phone"],
+            "photo_url": consultant.get("photo_url"),
+            "franchise_id": consultant["franchise_id"],
+            "franchise_name": franchise.get("office_name") if franchise else None
+        }
+    }
+
+
+async def get_current_consultant(
+    credentials: HTTPAuthorizationCredentials = Depends(consultant_security)
+):
+    """Get current consultant from JWT token"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Giriş yapmanız gerekiyor")
+    
+    try:
+        from auth import SECRET_KEY
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=["HS256"])
+        
+        if payload.get("type") != "consultant":
+            raise HTTPException(status_code=401, detail="Geçersiz token")
+        
+        consultant_id = payload.get("sub")
+        consultant = await db.consultants.find_one({"id": consultant_id}, {"_id": 0, "password_hash": 0})
+        
+        if not consultant:
+            raise HTTPException(status_code=401, detail="Danışman bulunamadı")
+        
+        if not consultant.get("active"):
+            raise HTTPException(status_code=403, detail="Hesabınız devre dışı")
+        
+        return consultant
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Oturum süresi doldu")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Geçersiz token")
+
+
+@api_router.get("/consultant/me")
+async def get_consultant_profile(consultant: dict = Depends(get_current_consultant)):
+    """Get current consultant profile"""
+    franchise = await db.franchises.find_one(
+        {"id": consultant["franchise_id"]}, 
+        {"_id": 0, "office_name": 1, "city": 1, "district": 1}
+    )
+    consultant["franchise"] = franchise
+    
+    # Get consultant's property count
+    property_count = await db.properties.count_documents({
+        "consultant_id": consultant["id"],
+        "active": True
+    })
+    consultant["property_count"] = property_count
+    
+    return consultant
+
+
+@api_router.put("/consultant/me")
+async def update_consultant_profile(
+    update_data: ConsultantUpdate,
+    consultant: dict = Depends(get_current_consultant)
+):
+    """Update own profile (consultant)"""
+    # Consultants can only update certain fields
+    allowed_fields = ["phone", "bio", "specialization", "languages", "social_media"]
+    update_dict = {}
+    
+    for field in allowed_fields:
+        value = getattr(update_data, field, None)
+        if value is not None:
+            update_dict[field] = value
+    
+    # Password change
+    if update_data.password:
+        update_dict["password_hash"] = get_password_hash(update_data.password)
+    
+    if update_dict:
+        await db.consultants.update_one(
+            {"id": consultant["id"]},
+            {"$set": update_dict}
+        )
+    
+    updated = await db.consultants.find_one({"id": consultant["id"]}, {"_id": 0, "password_hash": 0})
+    return {"message": "Profil güncellendi", "consultant": updated}
+
+
+@api_router.get("/consultant/properties")
+async def get_consultant_properties(
+    skip: int = 0,
+    limit: int = 50,
+    consultant: dict = Depends(get_current_consultant)
+):
+    """Get consultant's own properties"""
+    query = {"consultant_id": consultant["id"]}
+    
+    total = await db.properties.count_documents(query)
+    properties = await db.properties.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
+    
+    return {
+        "properties": properties,
+        "total": total,
+        "skip": skip,
+        "limit": limit
+    }
+
+
+@api_router.post("/consultant/properties")
+async def create_consultant_property(
+    property_data: PropertyCreate,
+    consultant: dict = Depends(get_current_consultant)
+):
+    """Create a new property (consultant)"""
+    property_dict = property_data.model_dump()
+    property_dict["id"] = str(uuid.uuid4())
+    property_dict["consultant_id"] = consultant["id"]
+    property_dict["consultant_name"] = consultant["name"]
+    property_dict["franchise_id"] = consultant["franchise_id"]
+    property_dict["created_at"] = datetime.now(timezone.utc)
+    property_dict["active"] = True
+    property_dict["views"] = 0
+    
+    await db.properties.insert_one(property_dict)
+    
+    return {"message": "İlan başarıyla oluşturuldu", "property": property_dict}
+
+
+@api_router.put("/consultant/properties/{property_id}")
+async def update_consultant_property(
+    property_id: str,
+    property_data: PropertyCreate,
+    consultant: dict = Depends(get_current_consultant)
+):
+    """Update consultant's own property"""
+    property = await db.properties.find_one({"id": property_id})
+    
+    if not property:
+        raise HTTPException(status_code=404, detail="İlan bulunamadı")
+    
+    # Verify ownership
+    if property.get("consultant_id") != consultant["id"]:
+        raise HTTPException(status_code=403, detail="Bu ilanı düzenleme yetkiniz yok")
+    
+    update_dict = property_data.model_dump()
+    update_dict["updated_at"] = datetime.now(timezone.utc)
+    
+    await db.properties.update_one(
+        {"id": property_id},
+        {"$set": update_dict}
+    )
+    
+    updated = await db.properties.find_one({"id": property_id}, {"_id": 0})
+    return {"message": "İlan güncellendi", "property": updated}
+
+
+@api_router.delete("/consultant/properties/{property_id}")
+async def delete_consultant_property(
+    property_id: str,
+    consultant: dict = Depends(get_current_consultant)
+):
+    """Delete consultant's own property"""
+    property = await db.properties.find_one({"id": property_id})
+    
+    if not property:
+        raise HTTPException(status_code=404, detail="İlan bulunamadı")
+    
+    # Verify ownership
+    if property.get("consultant_id") != consultant["id"]:
+        raise HTTPException(status_code=403, detail="Bu ilanı silme yetkiniz yok")
+    
+    await db.properties.delete_one({"id": property_id})
+    return {"message": "İlan silindi"}
+
+
+@api_router.post("/consultant/properties/{property_id}/upload-image")
+async def upload_consultant_property_image(
+    property_id: str,
+    file: UploadFile = File(...),
+    consultant: dict = Depends(get_current_consultant)
+):
+    """Upload image for consultant's property"""
+    property = await db.properties.find_one({"id": property_id})
+    
+    if not property:
+        raise HTTPException(status_code=404, detail="İlan bulunamadı")
+    
+    # Verify ownership
+    if property.get("consultant_id") != consultant["id"]:
+        raise HTTPException(status_code=403, detail="Bu ilana resim yükleme yetkiniz yok")
+    
+    # Save file
+    upload_dir = ROOT_DIR / "static" / "properties" / property_id
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    file_extension = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = upload_dir / filename
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    image_url = f"/static/properties/{property_id}/{filename}"
+    
+    # Add to images array
+    await db.properties.update_one(
+        {"id": property_id},
+        {"$push": {"images": image_url}}
+    )
+    
+    return {"message": "Resim yüklendi", "image_url": image_url}
+
+
 # Include router and add CORS
 app.include_router(api_router)
 

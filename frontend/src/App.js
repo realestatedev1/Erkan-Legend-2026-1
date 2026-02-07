@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { CompareProvider } from './context/CompareContext';
+import { ConsultantAuthProvider } from './context/ConsultantAuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
@@ -30,6 +31,10 @@ import FranchiseManagement from './pages/admin/FranchiseManagement';
 import ConsultantManagement from './pages/admin/ConsultantManagement';
 import Messages from './pages/admin/Messages';
 import Applications from './pages/admin/Applications';
+
+// Consultant Portal Pages
+import ConsultantLogin from './pages/consultant/ConsultantLogin';
+import ConsultantDashboard from './pages/consultant/ConsultantDashboard';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -85,16 +90,41 @@ const AppRoutes = () => {
   );
 };
 
+// Consultant Portal Routes (without Header/Footer)
+const ConsultantRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/consultant/login" element={<ConsultantLogin />} />
+      <Route path="/consultant/dashboard" element={<ConsultantDashboard />} />
+      <Route path="/consultant/*" element={<Navigate to="/consultant/login" />} />
+    </Routes>
+  );
+};
+
+// Main Router - decides which layout to use
+const MainRouter = () => {
+  const path = window.location.pathname;
+  
+  // Consultant portal uses different layout
+  if (path.startsWith('/consultant')) {
+    return <ConsultantRoutes />;
+  }
+  
+  return <AppRoutes />;
+};
+
 function App() {
   return (
     <AuthProvider>
-      <FavoritesProvider>
-        <CompareProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </CompareProvider>
-      </FavoritesProvider>
+      <ConsultantAuthProvider>
+        <FavoritesProvider>
+          <CompareProvider>
+            <BrowserRouter>
+              <MainRouter />
+            </BrowserRouter>
+          </CompareProvider>
+        </FavoritesProvider>
+      </ConsultantAuthProvider>
     </AuthProvider>
   );
 }

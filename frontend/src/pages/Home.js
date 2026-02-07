@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { propertyAPI, franchiseAPI, locationAPI } from '../lib/api';
+import { propertyAPI, franchiseAPI, locationAPI, consultantAPI } from '../lib/api';
+import { Phone, MessageCircle, User, Briefcase } from 'lucide-react';
 
 const Home = () => {
   const [featuredProperties, setFeaturedProperties] = useState([]);

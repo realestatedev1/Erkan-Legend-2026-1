@@ -106,6 +106,23 @@ const Home = () => {
     }
   };
 
+  const loadConsultants = async () => {
+    try {
+      const response = await consultantAPI.getAll(null, true);
+      // Shuffle and get up to 6 consultants for display
+      const shuffled = (response.data || []).sort(() => 0.5 - Math.random());
+      setConsultants(shuffled.slice(0, 6));
+    } catch (error) {
+      console.error('Failed to load consultants:', error);
+    }
+  };
+
+  const handleWhatsApp = (phone, name) => {
+    const message = t('home.consultants.whatsappMessage', { name, defaultValue: `Merhaba ${name}, Legend Cities web sitesinden ulaşıyorum.` });
+    const cleanPhone = phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();

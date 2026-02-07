@@ -13,6 +13,7 @@ import Properties from './pages/Properties';
 import PropertyDetail from './pages/PropertyDetail';
 import Offices from './pages/Offices';
 import OfficeDetail from './pages/OfficeDetail';
+import Consultants from './pages/Consultants';
 import Services from './pages/Services';
 import About from './pages/About';
 import Franchise from './pages/Franchise';

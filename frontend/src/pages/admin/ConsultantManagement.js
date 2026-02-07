@@ -86,6 +86,8 @@ const ConsultantManagement = () => {
       title: consultant.title || 'Gayrimenkul Danışmanı',
       phone: consultant.phone,
       email: consultant.email,
+      username: consultant.username || '',
+      password: '', // Don't show existing password
       bio: consultant.bio || '',
       experience_years: consultant.experience_years || '',
       specialization: consultant.specialization || [],

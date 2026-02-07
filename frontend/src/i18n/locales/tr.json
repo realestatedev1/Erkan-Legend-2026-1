@@ -106,6 +106,14 @@
       "title": "Franchise Olun",
       "subtitle": "Legend Cities ailesine katılın ve başarı hikayenizi yazın",
       "apply": "Başvuru Yap"
+    },
+    "consultants": {
+      "title": "Uzman Danışmanlarımız",
+      "subtitle": "Deneyimli ekibimizle hayalinizdeki mülke ulaşın",
+      "years": "yıl",
+      "call": "Ara",
+      "viewOffices": "Tüm Ofislerimizi Görün",
+      "whatsappMessage": "Merhaba {{name}}, Legend Cities web sitesinden ulaşıyorum."
     }
   },
   "properties": {

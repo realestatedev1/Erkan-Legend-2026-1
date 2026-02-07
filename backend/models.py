@@ -322,6 +322,9 @@ class Consultant(BaseModel):
     title: str = "Gayrimenkul Danışmanı"  # Ünvan
     phone: str
     email: str
+    # Login credentials
+    username: Optional[str] = None  # Giriş için kullanıcı adı
+    password_hash: Optional[str] = None  # Şifre hash'i
     photo_url: Optional[str] = None
     bio: Optional[str] = None  # Kısa biyografi
     specialization: Optional[List[str]] = None  # Uzmanlık alanları: ["konut", "ticari", "arsa"]
@@ -329,6 +332,8 @@ class Consultant(BaseModel):
     experience_years: Optional[int] = None  # Deneyim yılı
     social_media: Optional[dict] = None  # {"linkedin": "...", "instagram": "..."}
     active: bool = True
+    can_login: bool = False  # Giriş yetkisi var mı
+    last_login: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ConsultantCreate(BaseModel):
@@ -337,6 +342,8 @@ class ConsultantCreate(BaseModel):
     title: str = "Gayrimenkul Danışmanı"
     phone: str
     email: str
+    username: Optional[str] = None
+    password: Optional[str] = None  # Plain password, will be hashed
     photo_url: Optional[str] = None
     bio: Optional[str] = None
     specialization: Optional[List[str]] = None
@@ -349,6 +356,8 @@ class ConsultantUpdate(BaseModel):
     title: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None  # New password if changing
     photo_url: Optional[str] = None
     bio: Optional[str] = None
     specialization: Optional[List[str]] = None
@@ -356,4 +365,9 @@ class ConsultantUpdate(BaseModel):
     experience_years: Optional[int] = None
     social_media: Optional[dict] = None
     active: Optional[bool] = None
+    can_login: Optional[bool] = None
+
+class ConsultantLogin(BaseModel):
+    username: str
+    password: str
 

@@ -269,6 +269,13 @@ const ConsultantManagement = () => {
                     </p>
                   )}
 
+                  {/* Login Status */}
+                  {consultant.can_login && (
+                    <p className="text-xs text-green-600 mb-2 flex items-center gap-1">
+                      🔐 Portal erişimi aktif ({consultant.username})
+                    </p>
+                  )}
+
                   {/* Action Buttons */}
                   <div className="flex gap-2 mt-3 pt-3 border-t">
                     <button

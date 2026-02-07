@@ -2111,10 +2111,29 @@ async def create_consultant(
     if existing:
         raise HTTPException(status_code=400, detail="Bu e-posta adresi bu ofiste zaten kayıtlı")
     
-    consultant = Consultant(**consultant_data.model_dump())
+    # Check for duplicate username if provided
+    if consultant_data.username:
+        existing_username = await db.consultants.find_one({"username": consultant_data.username})
+        if existing_username:
+            raise HTTPException(status_code=400, detail="Bu kullanıcı adı zaten kullanılıyor")
+    
+    # Prepare consultant data
+    consultant_dict = consultant_data.model_dump()
+    
+    # Hash password if provided
+    if consultant_data.password and consultant_data.username:
+        consultant_dict["password_hash"] = get_password_hash(consultant_data.password)
+        consultant_dict["can_login"] = True
+    del consultant_dict["password"]  # Remove plain password
+    
+    consultant = Consultant(**consultant_dict)
     await db.consultants.insert_one(consultant.model_dump())
     
-    return {"message": "Danışman başarıyla eklendi", "consultant": consultant.model_dump()}
+    # Remove sensitive data from response
+    response_data = consultant.model_dump()
+    response_data.pop("password_hash", None)
+    
+    return {"message": "Danışman başarıyla eklendi", "consultant": response_data}
 
 
 @api_router.put("/consultants/{consultant_id}")

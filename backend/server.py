@@ -2157,13 +2157,29 @@ async def update_consultant(
     
     update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
     
+    # Handle password update
+    if "password" in update_dict and update_dict["password"]:
+        update_dict["password_hash"] = get_password_hash(update_dict["password"])
+        if update_data.username or consultant.get("username"):
+            update_dict["can_login"] = True
+    update_dict.pop("password", None)
+    
+    # Check username uniqueness if changing
+    if "username" in update_dict:
+        existing = await db.consultants.find_one({
+            "username": update_dict["username"],
+            "id": {"$ne": consultant_id}
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu kullanıcı adı zaten kullanılıyor")
+    
     if update_dict:
         await db.consultants.update_one(
             {"id": consultant_id},
             {"$set": update_dict}
         )
     
-    updated = await db.consultants.find_one({"id": consultant_id}, {"_id": 0})
+    updated = await db.consultants.find_one({"id": consultant_id}, {"_id": 0, "password_hash": 0})
     return {"message": "Danışman güncellendi", "consultant": updated}
 
 

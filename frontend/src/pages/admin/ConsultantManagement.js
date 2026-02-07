@@ -381,6 +381,42 @@ const ConsultantManagement = () => {
                   </div>
                 </div>
 
+                {/* Portal Login Credentials */}
+                <div className="border-t pt-4 mt-2">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    🔐 Portal Giriş Bilgileri
+                    <span className="text-xs font-normal text-gray-500">(Danışmanın kendi ilanlarını yönetmesi için)</span>
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Kullanıcı Adı</label>
+                      <input
+                        type="text"
+                        value={formData.username}
+                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+                        placeholder="ornek.danisman"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {editingConsultant ? 'Yeni Şifre' : 'Şifre'}
+                        {editingConsultant && <span className="text-xs text-gray-500 ml-1">(Boş bırakırsanız değişmez)</span>}
+                      </label>
+                      <input
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Kullanıcı adı ve şifre tanımlandığında danışman <strong>/consultant/login</strong> adresinden giriş yapabilir.
+                  </p>
+                </div>
+
                 {/* Experience */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Deneyim (Yıl)</label>

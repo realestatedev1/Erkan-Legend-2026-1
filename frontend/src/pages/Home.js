@@ -350,6 +350,106 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Our Consultants Section */}
+      {consultants.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4 flex items-center justify-center gap-3">
+                <Briefcase className="w-10 h-10 text-red-600" />
+                {t('home.consultants.title', 'Uzman Danışmanlarımız')}
+              </h2>
+              <p className="text-gray-600 text-lg">
+                {t('home.consultants.subtitle', 'Deneyimli ekibimizle hayalinizdeki mülke ulaşın')}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {consultants.map((consultant) => {
+                const photoUrl = consultant.photo_url 
+                  ? (consultant.photo_url.startsWith('http') ? consultant.photo_url : `${process.env.REACT_APP_BACKEND_URL}${consultant.photo_url}`)
+                  : null;
+                
+                return (
+                  <div 
+                    key={consultant.id} 
+                    className="bg-gray-50 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    {/* Photo */}
+                    <div className="h-56 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center relative">
+                      {photoUrl ? (
+                        <img 
+                          src={photoUrl} 
+                          alt={consultant.name} 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-lg">
+                          <User className="w-14 h-14 text-red-400" />
+                        </div>
+                      )}
+                      {/* Experience Badge */}
+                      {consultant.experience_years && (
+                        <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow">
+                          {consultant.experience_years} {t('home.consultants.years', 'yıl')}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Info */}
+                    <div className="p-5">
+                      <h3 className="font-bold text-xl text-gray-800">{consultant.name}</h3>
+                      <p className="text-red-600 font-medium mb-1">{consultant.title}</p>
+                      <p className="text-sm text-gray-500 mb-3">
+                        📍 {consultant.franchise_name || 'Legend Cities'}
+                      </p>
+                      
+                      {/* Specialization Tags */}
+                      {consultant.specialization && consultant.specialization.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {consultant.specialization.slice(0, 3).map((spec, idx) => (
+                            <span key={idx} className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">
+                              {spec}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Contact Buttons */}
+                      <div className="flex gap-2">
+                        <a
+                          href={`tel:${consultant.phone}`}
+                          className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-2.5 px-4 rounded-lg hover:bg-red-700 transition font-medium"
+                        >
+                          <Phone className="w-4 h-4" />
+                          {t('home.consultants.call', 'Ara')}
+                        </a>
+                        <button
+                          onClick={() => handleWhatsApp(consultant.phone, consultant.name)}
+                          className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white py-2.5 px-4 rounded-lg hover:bg-green-700 transition font-medium"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          WhatsApp
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="text-center mt-12">
+              <Link
+                to="/offices"
+                className="inline-block bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition font-semibold"
+              >
+                {t('home.consultants.viewOffices', 'Tüm Ofislerimizi Görün')}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Services Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">

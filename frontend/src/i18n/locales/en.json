@@ -106,6 +106,14 @@
       "title": "Become a Franchisee",
       "subtitle": "Join the Legend Cities family and write your success story",
       "apply": "Apply Now"
+    },
+    "consultants": {
+      "title": "Our Expert Consultants",
+      "subtitle": "Reach your dream property with our experienced team",
+      "years": "years",
+      "call": "Call",
+      "viewOffices": "View All Offices",
+      "whatsappMessage": "Hello {{name}}, I'm contacting you from Legend Cities website."
     }
   },
   "properties": {

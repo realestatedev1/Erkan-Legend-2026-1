@@ -19,6 +19,8 @@ const ConsultantManagement = () => {
     title: 'Gayrimenkul Danışmanı',
     phone: '',
     email: '',
+    username: '',
+    password: '',
     bio: '',
     experience_years: '',
     specialization: [],

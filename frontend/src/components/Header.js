@@ -43,6 +43,7 @@ const Header = () => {
             <Link to="/" className="text-gray-700 hover:text-red-600 transition">{t('nav.home')}</Link>
             <Link to="/properties" className="text-gray-700 hover:text-red-600 transition">{t('nav.properties')}</Link>
             <Link to="/offices" className="text-gray-700 hover:text-red-600 transition">{t('nav.offices')}</Link>
+            <Link to="/consultants" className="text-gray-700 hover:text-red-600 transition">{t('nav.consultants', 'Danışmanlar')}</Link>
             <Link to="/services" className="text-gray-700 hover:text-red-600 transition">{t('nav.services')}</Link>
             <Link to="/about" className="text-gray-700 hover:text-red-600 transition">{t('nav.about')}</Link>
             <Link to="/franchise" className="text-gray-700 hover:text-red-600 transition">{t('nav.franchise')}</Link>

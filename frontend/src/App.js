@@ -35,6 +35,7 @@ import Applications from './pages/admin/Applications';
 // Consultant Portal Pages
 import ConsultantLogin from './pages/consultant/ConsultantLogin';
 import ConsultantDashboard from './pages/consultant/ConsultantDashboard';
+import ConsultantPropertyForm from './pages/consultant/ConsultantPropertyForm';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();

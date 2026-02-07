@@ -45,6 +45,7 @@ const Home = () => {
 
   useEffect(() => {
     loadFeaturedProperties();
+    loadConsultants();
     
     // Auto-slide every 5 seconds
     const slideInterval = setInterval(() => {

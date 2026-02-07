@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useConsultantAuth, consultantPortalAPI } from '../context/ConsultantAuthContext';
+import { useConsultantAuth, consultantPortalAPI } from '../../context/ConsultantAuthContext';
 import { 
   Home, Plus, Edit2, Trash2, Eye, Image, LogOut, User, 
   Building, Phone, Mail, MapPin, Settings, BarChart3

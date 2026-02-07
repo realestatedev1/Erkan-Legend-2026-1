@@ -144,6 +144,7 @@ const Header = () => {
             <Link to="/" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.home')}</Link>
             <Link to="/properties" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.properties')}</Link>
             <Link to="/offices" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.offices')}</Link>
+            <Link to="/consultants" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.consultants', 'Danışmanlar')}</Link>
             <Link to="/services" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.services')}</Link>
             <Link to="/about" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.about')}</Link>
             <Link to="/franchise" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-red-600">{t('nav.franchise')}</Link>

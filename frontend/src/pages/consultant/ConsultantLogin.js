@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useConsultantAuth } from '../context/ConsultantAuthContext';
+import { useConsultantAuth } from '../../context/ConsultantAuthContext';
 import { User, Lock, AlertCircle, Briefcase } from 'lucide-react';
 
 const ConsultantLogin = () => {

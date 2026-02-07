@@ -6,6 +6,7 @@ import { Phone, MessageCircle, User, Briefcase } from 'lucide-react';
 
 const Home = () => {
   const [featuredProperties, setFeaturedProperties] = useState([]);
+  const [consultants, setConsultants] = useState([]);
   const [stats, setStats] = useState({ properties: 150, clients: 5000, experience: 63 });
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchParams, setSearchParams] = useState({
